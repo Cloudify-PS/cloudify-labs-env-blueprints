@@ -1,0 +1,77 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml 
+  - http://www.getcloudify.org/spec/openstack-plugin/1.5/plugin.yaml 
+  - http://www.getcloudify.org/spec/diamond-plugin/1.3.3/plugin.yaml 
+  - types/aios.yaml
+
+inputs:
+
+  image_id:
+    type: string
+    default: '6dc7cc97-b259-4a5e-b222-bcaec0fb0a68'
+
+  flavor_id:
+    type: string
+    default: 'c871d2fc-c6df-41ab-8a89-6ddc5d8137d0'
+
+  agent_user:
+    type: string
+    default: 'centos'
+
+  lab_security_group_name:
+    type: string
+    default: 'lab_sg'
+
+
+node_templates:
+
+
+  lab_floating_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+
+  lab_security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      use_external_resource: True
+      resource_id: { get_input: lab_security_group_name }
+
+  lab_server:
+    type: aios.nodes.MonitoredServer
+    properties:
+      server:
+        image: { get_input: image_id }
+        flavor: { get_input: flavor_id }
+      cloudify_agent:
+        user: { get_input: agent_user }
+    interfaces:
+      maintenance:
+        suspend:
+          implementation: scripts/suspend.py
+          executor: central_deployment_agent
+        resume:
+          implementation: scripts/resume.py
+          executor: central_deployment_agent
+    relationships:
+      - target: lab_floating_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+
+
+  openstack_plugin:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      lifesycle:
+        create:
+          implementation: scripts/openstack_plugin_install.sh
+          executor: central_deployment_agent
+
+
+outputs:
+  lab_env:
+    description: Openstack Cloudify Lab
+    value:
+      vpn_endpoint: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
