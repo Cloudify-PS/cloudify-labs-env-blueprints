@@ -11,7 +11,7 @@ inputs:
 
   image_id:
     type: string
-    default: '6dc7cc97-b259-4a5e-b222-bcaec0fb0a68'
+    default: '87db76ee-cb31-4f98-8818-6581eb5a3d8e'
 
   flavor_id:
     type: string
@@ -60,7 +60,6 @@ node_templates:
       - target: lab_security_group
         type: cloudify.openstack.server_connected_to_security_group
 
-
   openstack_plugin:
     type: cloudify.nodes.ApplicationModule
     interfaces:
@@ -69,6 +68,55 @@ node_templates:
           implementation: scripts/openstack_plugin_install.sh
           executor: central_deployment_agent
 
+
+  rproxy:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: scripts/proxy_install.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+        start:
+          implementation: scripts/proxy_start.sh
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+  catalog:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: scripts/catalog_install.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+
+
+###
+# Visual nodes
+
+  vpn:
+    type: cloudify.nodes.ApplicationModule
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+  openstack:
+    type: cloudify.nodes.ApplicationServer
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+  cloudify:
+    type: cloudify.nodes.ApplicationModule
+    relationships:
+      - target: openstack
+        type: cloudify.relationships.contained_in
 
 outputs:
   lab_env:
