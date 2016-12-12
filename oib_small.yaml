@@ -96,15 +96,33 @@ node_templates:
         type: cloudify.relationships.contained_in
 
 
+  webconsole:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: scripts/webc_install.sh
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+
+  vpn:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/vpn_configure.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
 
 ###
 # Visual nodes
 
-  vpn:
-    type: cloudify.nodes.ApplicationModule
-    relationships:
-      - target: lab_server
-        type: cloudify.relationships.contained_in
 
   openstack:
     type: cloudify.nodes.ApplicationServer
@@ -119,9 +137,33 @@ node_templates:
         type: cloudify.relationships.contained_in
 
 
-
 outputs:
-  lab_env:
-    description: Openstack Cloudify Lab
-    value:
-      vpn_endpoint: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+
+  Cloudify_Manager_URL:
+    description: Cloudify Manager URL
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+
+
+  Catalog_App_URL:
+    description: Blueprint Catalog URL
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/catalog" ] }
+
+  Openstack_Dashboard_URL:
+    description: Openstach Horizon URL
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+
+  WebConsole_URL:
+    description: WebConsole
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/webc" ] }
+
+  WebConsole_Credentials:
+    description: Web Console Auth
+    value: "Login: cloudify Password: Se010203!"
+
+  OpenVPN_EndPoint_IP:
+    description: VPN end point IP
+    value: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+
+  OpenVPN_Configuration:
+    description: Configuration Download
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
