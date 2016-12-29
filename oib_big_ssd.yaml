@@ -180,6 +180,9 @@ outputs:
     description: Web Console Auth
     value: "Login: cloudify Password: Se010203!"
 
+  Provisioned_Resource_Access:
+    value: "To access provisioned VPN Connection needed, Download Ready Openvpn configuration form output OpenVPN_Configuration"
+
   OpenVPN_EndPoint_IP:
     description: VPN end point IP
     value: { get_attribute: [ lab_floating_ip, floating_ip_address ] }

@@ -163,6 +163,9 @@ outputs:
     description: VPN end point IP
     value: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
 
+  Provisioned_Resource_Access:
+    value: "To access provisioned VPN Connection needed, Download Ready Openvpn configuration form output OpenVPN_Configuration"
+
   OpenVPN_Configuration:
     description: Configuration Download
     value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
