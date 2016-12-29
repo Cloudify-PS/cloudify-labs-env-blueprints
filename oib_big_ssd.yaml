@@ -181,7 +181,10 @@ outputs:
     value: "Login: cloudify Password: Se010203!"
 
   Provisioned_Resource_Access:
-    value: "To access provisioned VPN Connection needed, Download Ready Openvpn configuration form output OpenVPN_Configuration"
+    value: "To access provisioned VM's VPN Connection is needed, use OpenVPN_Configuration" 
+
+  Openstack_Dashboard_Credentials:
+    value: "User: admin Password: cloudify1234"
 
   OpenVPN_EndPoint_IP:
     description: VPN end point IP
