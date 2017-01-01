@@ -186,6 +186,9 @@ outputs:
   Openstack_Dashboard_Credentials:
     value: "User: admin Password: cloudify1234"
 
+  Documentation:
+    value: "https://goo.gl/Wx3OEq"
+
   OpenVPN_EndPoint_IP:
     description: VPN end point IP
     value: { get_attribute: [ lab_floating_ip, floating_ip_address ] }

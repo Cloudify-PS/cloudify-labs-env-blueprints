@@ -169,6 +169,8 @@ outputs:
   Openstack_Dashboard_Credentials:
     value: "User: admin Password: cloudify1234"
 
+  Documentation:
+    value: "https://goo.gl/Wx3OEq"
 
   OpenVPN_Configuration:
     description: Configuration Download
