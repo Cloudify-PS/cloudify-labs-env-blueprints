@@ -12,7 +12,7 @@ inputs:
   image_id:
     type: string
 #   default: '87db76ee-cb31-4f98-8818-6581eb5a3d8e'
-    default: '727ffc01-91cd-48ec-93cf-df2ab292dbee'
+    default: '40f051bb-2422-4756-b883-06401c9e5999'
 
   flavor_id:
     type: string
@@ -144,8 +144,8 @@ outputs:
     description: Cloudify Manager URL
     value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
 
-  Manager_auth:
-    value: "Cloudify manager User: admin  Password admin"
+  Manager_Login:
+    value: { concat: ["Cloudify manager User: admin  Password admin IP: ", { get_attribute: [ lab_floating_ip, floating_ip_address ] } ] }
 
 
   Catalog_App_URL:
@@ -174,8 +174,8 @@ outputs:
   Openstack_Dashboard_Credentials:
     value: "User: admin Password: cloudify1234"
 
-  #Documentation:
-    #value: "https://goo.gl/Wx3OEq"
+  Documentation:
+    value: "https://goo.gl/Wx3OEq"
 
   OpenVPN_Configuration:
     description: Configuration Download
