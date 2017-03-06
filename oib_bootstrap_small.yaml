@@ -11,8 +11,7 @@ inputs:
 
   image_id:
     type: string
-#   default: '87db76ee-cb31-4f98-8818-6581eb5a3d8e'
-    default: '55fc1232-fb9f-4e12-880f-9568aafb6dd0'
+    default: '2fed14f1-9802-4b92-9715-396315405dc5'
 
   flavor_id:
     type: string
@@ -84,29 +83,6 @@ node_templates:
       - target: lab_server
         type: cloudify.relationships.contained_in
 
-  catalog:
-    type: cloudify.nodes.ApplicationModule
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          implementation: scripts/catalog_install.sh
-          inputs:
-            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
-    relationships:
-      - target: lab_server
-        type: cloudify.relationships.contained_in
-
-
-  webconsole:
-    type: cloudify.nodes.ApplicationModule
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          implementation: scripts/webc_install.sh
-    relationships:
-      - target: lab_server
-        type: cloudify.relationships.contained_in
-
 
   vpn:
     type: cloudify.nodes.ApplicationModule
@@ -131,35 +107,11 @@ node_templates:
       - target: lab_server
         type: cloudify.relationships.contained_in
 
-  cloudify:
-    type: cloudify.nodes.ApplicationModule
-    relationships:
-      - target: openstack
-        type: cloudify.relationships.contained_in
-
-
 outputs:
-
-  Cloudify_Manager_URL:
-    description: Cloudify Manager URL
-    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
-
-
-  Catalog_App_URL:
-    description: Blueprint Catalog URL
-    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/catalog" ] }
 
   Openstack_Dashboard_URL:
     description: Openstach Horizon URL
     value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
-
-  WebConsole_URL:
-    description: WebConsole
-    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/webc" ] }
-
-  WebConsole_Credentials:
-    description: Web Console Auth
-    value: "Login: cloudify Password: Se010203!"
 
   OpenVPN_EndPoint_IP:
     description: VPN end point IP
