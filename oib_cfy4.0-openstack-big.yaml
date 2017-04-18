@@ -12,7 +12,7 @@ inputs:
   image_id:
     type: string
 #   default: '87db76ee-cb31-4f98-8818-6581eb5a3d8e'
-    default: '033bc0e6-2ec8-4318-8d67-3ceb4b1ad54a'
+    default: '033bc0e6-2ec8-4318-8d67-3ceb4b1ad54a' # cloudify-lab-40-openstack-V170417
 
   flavor_id:
     type: string
@@ -148,11 +148,6 @@ outputs:
     description: admin's password
     value: "nEQSwrbNPz1w"
 
-
-  Catalog_App_URL:
-    description: Blueprint Catalog URL
-    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/catalog" ] }
-
   Openstack_Dashboard_URL:
     description: Openstach Horizon URL
     value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
@@ -176,7 +171,8 @@ outputs:
     value: "User: admin Password: cloudify1234"
 
   Documentation:
-    value: "https://goo.gl/Wx3OEq"
+#    value: "https://goo.gl/Wx3OEq" # default presentation
+    value: "https://goo.gl/4m507z" # cfy4 presentation
 
   OpenVPN_Configuration:
     description: Configuration Download

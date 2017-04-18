@@ -148,11 +148,6 @@ outputs:
     description: admin's password
     value: "nEQSwrbNPz1w"
 
-
-  Catalog_App_URL:
-    description: Blueprint Catalog URL
-    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/catalog" ] }
-
   Openstack_Dashboard_URL:
     description: Openstach Horizon URL
     value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
@@ -176,7 +171,8 @@ outputs:
     value: "User: admin Password: cloudify1234"
 
   Documentation:
-    value: "https://goo.gl/Wx3OEq"
+#    value: "https://goo.gl/Wx3OEq" # default presentation
+    value: "https://goo.gl/4m507z" # cfy4 presentation
 
   OpenVPN_Configuration:
     description: Configuration Download
