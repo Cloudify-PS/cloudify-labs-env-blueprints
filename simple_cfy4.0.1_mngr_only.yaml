@@ -1,0 +1,80 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - http://www.getcloudify.org/spec/openstack-plugin/1.4/plugin.yaml
+  - http://www.getcloudify.org/spec/diamond-plugin/1.3.3/plugin.yaml
+  - types/aios.yaml
+
+inputs:
+
+  image_id:
+    type: string
+    default: 'bfd99366-a5e1-409b-a586-d5090742b988'
+
+  flavor_id:
+    type: string
+    default: 'af2a80fe-ccad-43df-8cae-6418da948467'
+
+  agent_user:
+    type: string
+    default: 'centos'
+
+  lab_security_group_name:
+    type: string
+    default: 'lab_sg'
+
+
+node_templates:
+
+
+  lab_floating_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+
+  lab_security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      use_external_resource: True
+      resource_id: { get_input: lab_security_group_name }
+
+  cloudify_manager:
+    type: aios.nodes.MonitoredServer
+    properties:
+      server:
+        image: { get_input: image_id }
+        flavor: { get_input: flavor_id }
+      cloudify_agent:
+        user: { get_input: agent_user }
+    interfaces:
+      maintenance:
+        suspend:
+          implementation: scripts/suspend.py
+          executor: central_deployment_agent
+        resume:
+          implementation: scripts/resume.py
+          executor: central_deployment_agent
+    relationships:
+      - target: lab_floating_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+
+
+
+  cloudify_manager_app:
+    type: cloudify.nodes.ApplicationModule
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+
+
+outputs:
+
+  Cloudify_Manager_URL:
+    description: Cloudify Manager URL
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+
+
+  Documentation:
+    value: "https://goo.gl/4m507z" # cfy4 presentation
