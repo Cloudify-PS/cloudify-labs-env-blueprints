@@ -15,7 +15,7 @@ inputs:
 
   flavor_id:
     type: string
-    default: 'af2a80fe-ccad-43df-8cae-6418da948467'
+    default: '9cf6e43b-e191-47ca-8665-f8592e2d6227' #4x8
 
   agent_user:
     type: string
