@@ -11,7 +11,7 @@ inputs:
 
   image_id:
     type: string
-    default: 'bfd99366-a5e1-409b-a586-d5090742b988'
+    default: '29a03fe6-4c3d-41ee-afa6-ddf92fb6eda9'
 
   flavor_id:
     type: string

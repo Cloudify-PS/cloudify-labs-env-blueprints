@@ -11,7 +11,7 @@ inputs:
 
   image_id:
     type: string
-    default: '033bc0e6-2ec8-4318-8d67-3ceb4b1ad54a'
+    default: '9fe5fd57-0b81-4c40-bdd8-366dc7ecf0c0'
 
   flavor_id:
     type: string
@@ -38,7 +38,7 @@ node_templates:
       use_external_resource: True
       resource_id: { get_input: lab_security_group_name }
 
-  lab_server:
+  centos_server:
     type: aios.nodes.MonitoredServer
     properties:
       server:
@@ -65,5 +65,5 @@ node_templates:
 outputs:
 
   VM_Public_IP:
-    description: VPN end point IP
+    description: Host IP
     value: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
