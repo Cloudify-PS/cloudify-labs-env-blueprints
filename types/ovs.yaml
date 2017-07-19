@@ -25,11 +25,11 @@ node_types:
           default:
             implementation: scripts/ovs/ovs_start.sh
 
-
-
 relationships:
+
   ovs.relationships.vswitch_gre:
     dirived_from: cloudify.relationships.connected_to
+
     source_interfaces:
       cloudify.interfaces.relationship_lifecycle:
         establish:
@@ -37,6 +37,7 @@ relationships:
           inputs:
             direction:
               default: source
+
     target_interfaces:
       cloudify.interfaces.relationship_lifecycle:
         establish:
