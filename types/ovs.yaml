@@ -32,6 +32,9 @@ relationships:
           inputs:
             direction:
               default: source
+            rdirection:
+              default: target
+
 
     target_interfaces:
       cloudify.interfaces.relationship_lifecycle:
@@ -40,3 +43,5 @@ relationships:
           inputs:
             direction:
               default: target
+            rdirection:
+              default: source

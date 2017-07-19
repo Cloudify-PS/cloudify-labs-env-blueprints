@@ -136,6 +136,8 @@ node_templates:
     relationships:
       - target: cloudify_manager
         type: cloudify.relationships.contained_in
+      - target sdn_sw_oib
+        type: ovs.relationships.vswitch_gre
 
 
   sdn_sw_oib:
