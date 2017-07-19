@@ -25,7 +25,7 @@ node_types:
 relationships:
 
   ovs.relationships.vswitch_gre:
-    dirived_from: cloudify.relationships.connected_to
+    derived_from: cloudify.relationships.connected_to
 
     source_interfaces:
       cloudify.interfaces.relationship_lifecycle:
