@@ -126,26 +126,27 @@ node_templates:
       - target: lab_server
         type: cloudify.relationships.contained_in
 
-  sdn_sw_obi:
-    type: cloudify.nodes.ApplicationServer
-    relationships:
-      - target: lab_server
-        type: cloudify.relationships.contained_in
-
 
   sdn_sw_manager:
-    type: cloudify.nodes.ApplicationServer
+    type:  ovs.nodes.vswitch
+    properties:
+      ipaddr: 10.10.25.15
+      netmask: 255.255.255.0
     relationships:
       - target: cloudify_manager
         type: cloudify.relationships.contained_in
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        configure:
-          implementation: scripts/ovs/ovs_configure.sh
-          inputs:
-            name: "br-sdn"
-            ip: ""
-            
+
+
+  sdn_sw_oib:
+    type:  ovs.nodes.vswitch
+    properties:
+      use_external_resource: True
+      resource_id: br-mng
+
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+
 
 
 

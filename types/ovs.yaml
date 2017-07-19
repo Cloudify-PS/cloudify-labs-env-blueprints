@@ -1,0 +1,44 @@
+node_types:
+ ovs.nodes.vswitch:
+    derived_from: cloudify.nodes.ApplicationServer
+    properties:
+      use_external_resource:
+        default: False
+      resource_id:
+        default: br-ovs
+      ipaddr:
+        default: 192.168.0.1
+      netmask:
+        default: 255.255.255.0
+      
+
+
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        install:
+          default:
+            implementation: scripts/ovs/ovs_install.sh
+        configure:
+          default:
+            implementation: scripts/ovs/ovs_configure.sh
+        start:
+          default:
+            implementation: scripts/ovs/ovs_start.sh
+
+
+
+relationships:
+  ovs.relationships.vswitch_gre:
+    dirived_from: cloudify.relationships.connected_to
+    source_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        implementation: scripts/ovs_connect.sh
+        inputs:
+          direction:
+            default: source
+      target_interfaces:
+        cloudify.interfaces.relationship_lifecycle:
+          implementation: scripts/ovs_connect.sh
+          inputs:
+            direction:
+              default: target
