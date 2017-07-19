@@ -3,7 +3,7 @@
 
 bridge=$(ctx ${direction} node properties resource_id)
 interface_counter=$(ctx ${direction} instance runtime_properties gre_interface_counter)
-remote_ip=$(ctx ${rdirection} instance runtime_properties host_ip)
+remote_ip=$(ctx ${rdirection} instance host_ip)
 
 
 interface_counter=$((interface_counter+1))
