@@ -139,13 +139,11 @@ node_templates:
       - target: sdn_sw_oib
         type: ovs.relationships.vswitch_gre
 
-
   sdn_sw_oib:
     type:  ovs.nodes.vswitch
     properties:
       use_external_resource: True
       resource_id: br-mng
-
     relationships:
       - target: lab_server
         type: cloudify.relationships.contained_in
