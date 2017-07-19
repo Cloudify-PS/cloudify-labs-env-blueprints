@@ -164,13 +164,6 @@ node_templates:
         type: cloudify.relationships.contained_in
 
 
-  cloudify:
-    type: cloudify.nodes.ApplicationModule
-    relationships:
-      - target: openstack
-        type: cloudify.relationships.contained_in
-
-
 outputs:
 
   Cloudify_Manager_URL:
