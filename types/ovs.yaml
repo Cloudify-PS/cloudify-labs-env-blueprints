@@ -16,14 +16,11 @@ node_types:
     interfaces:
       cloudify.interfaces.lifecycle:
         install:
-          implementation:
-            default: scripts/ovs/ovs_install.sh
+          implementation: scripts/ovs/ovs_install.sh
         configure:
-          implementation:
-            default: scripts/ovs/ovs_configure.sh
+          implementation: scripts/ovs/ovs_configure.sh
         start:
-          implementation:
-            default: scripts/ovs/ovs_start.sh
+          implementation: scripts/ovs/ovs_start.sh
 
 relationships:
 
