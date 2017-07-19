@@ -1,6 +1,6 @@
 node_types:
  ovs.nodes.vswitch:
-    derived_from: cloudify.nodes.ApplicationServer
+    derived_from: cloudify.nodes.ApplicationModule
     properties:
       use_external_resource:
         default: False

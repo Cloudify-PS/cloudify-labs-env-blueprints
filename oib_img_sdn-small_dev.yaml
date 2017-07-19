@@ -145,7 +145,7 @@ node_templates:
       resource_id: br-mng
 
     relationships:
-      - target: cloudify_manager
+      - target: lab_server
         type: cloudify.relationships.contained_in
 
 
