@@ -36,7 +36,7 @@ sudo ifup ${name}
 
 else
 
-ctx logger info "Using exsisting resource_id: $name, skipping ovs configuration"
+ctx logger info "Using exsisting resource_id: $name - $use_external_resource  skipping ovs configuration"
 
 fi
 

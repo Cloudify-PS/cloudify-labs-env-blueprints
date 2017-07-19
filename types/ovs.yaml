@@ -15,7 +15,7 @@ node_types:
 
     interfaces:
       cloudify.interfaces.lifecycle:
-        install:
+        create:
           implementation: scripts/ovs/ovs_install.sh
         configure:
           implementation: scripts/ovs/ovs_configure.sh
