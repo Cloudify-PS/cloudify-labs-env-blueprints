@@ -19,8 +19,6 @@ node_types:
           implementation: scripts/ovs/ovs_install.sh
         configure:
           implementation: scripts/ovs/ovs_configure.sh
-        start:
-          implementation: scripts/ovs/ovs_start.sh
 
 relationships:
 
