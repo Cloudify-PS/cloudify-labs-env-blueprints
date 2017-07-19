@@ -9,7 +9,7 @@ netmask=$(ctx node properties netmask )
 ipaddr=$(ctx node properties ipaddr )
 
 
-if [ "$use_external_resource" = "False" ]; then
+if [ "$use_external_resource" != "True" ]; then
 
 
 ctx logger info "Configuring Bridge $name "
