@@ -37,10 +37,10 @@ relationships:
           inputs:
             direction:
               default: source
-      target_interfaces:
-        cloudify.interfaces.relationship_lifecycle:
-          establish:
-            implementation: scripts/ovs_connect.sh
-            inputs:
-              direction:
-                default: target
+    target_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        establish:
+          implementation: scripts/ovs_connect.sh
+          inputs:
+            direction:
+              default: target
