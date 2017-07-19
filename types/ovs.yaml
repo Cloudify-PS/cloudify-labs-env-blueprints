@@ -10,7 +10,7 @@ node_types:
         default: 192.168.0.1
       netmask:
         default: 255.255.255.0
-      
+
 
 
     interfaces:
@@ -32,13 +32,15 @@ relationships:
     dirived_from: cloudify.relationships.connected_to
     source_interfaces:
       cloudify.interfaces.relationship_lifecycle:
-        implementation: scripts/ovs_connect.sh
-        inputs:
-          direction:
-            default: source
-      target_interfaces:
-        cloudify.interfaces.relationship_lifecycle:
+        establish:
           implementation: scripts/ovs_connect.sh
           inputs:
             direction:
-              default: target
+              default: source
+      target_interfaces:
+        cloudify.interfaces.relationship_lifecycle:
+          establish:
+            implementation: scripts/ovs_connect.sh
+            inputs:
+              direction:
+                default: target
