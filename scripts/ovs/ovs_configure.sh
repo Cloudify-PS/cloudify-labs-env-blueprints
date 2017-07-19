@@ -1,12 +1,12 @@
 #!/bin/bash
 
-use_external_resource=$(ctx instance properties use_external_resource)
+use_external_resource=$(ctx node properties use_external_resource)
 
-name=$(ctx instance properties resource_id )
+name=$(ctx node properties resource_id )
 
-netmask=$(ctx instance properties netmask )
+netmask=$(ctx node properties netmask )
 
-ipaddr=$(ctx instance properties ipaddr )
+ipaddr=$(ctx node properties ipaddr )
 
 
 if [ "$use_external_resource" = "False" ]; then

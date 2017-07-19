@@ -1,6 +1,6 @@
 #!/bin/bash
 
-use_external_resource=$(ctx instance properties use_external_resource)
+use_external_resource=$(ctx node properties use_external_resource)
 
 if [ "$use_external_resource" = "False" ]; then
 
