@@ -26,7 +26,7 @@ EOF
 
 ctx logger info "Creating ifcfg "
 
-sudo cp /tmp/ifcfg-${name}/etc/sysconfig/network-scripts/
+sudo cp /tmp/ifcfg-${name} /etc/sysconfig/network-scripts/
 
 ctx logger info "Bringing up bridge"
 
