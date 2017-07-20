@@ -21,6 +21,7 @@ TYPE=OVSBridge
 BOOTPROTO=static
 IPADDR=${ipaddr}
 NETMASK=${netmask}
+MTU=1400
 ONBOOT=yes
 EOF
 
@@ -31,6 +32,8 @@ sudo cp /tmp/ifcfg-${name} /etc/sysconfig/network-scripts/
 ctx logger info "Bringing up bridge"
 
 sudo ifup ${name}
+
+#sudo ovs-vsctl set int ${naem} mtu_request=1450
 
 
 
