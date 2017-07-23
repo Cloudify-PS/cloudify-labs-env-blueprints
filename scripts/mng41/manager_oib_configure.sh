@@ -10,6 +10,7 @@ sudo /bin/bash -c "echo '192.168.113.0/24 via 10.10.25.253 dev br-ovs' >> /etc/s
 # generate Key
 sudo mkdir -p /etc/cloudify/.ssh/
 sudo ssh-keygen -f /etc/cloudify/.ssh/cfy-agent-kp -N ""
+sudo chown cfyuser:cfyuser /etc/cloudify/.ssh/cfy-agent-kp
 publick_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 
 # configure route
