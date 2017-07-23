@@ -130,8 +130,9 @@ node_templates:
   oib_cloudify_config:
     type: cloudify.nodes.ApplicationModule
     interfaces:
-      configure:
-        implementation: scripts/mng41/manager_oib_configure.sh
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/mng41/manager_oib_configure.sh
     relationships:
       - target: cloudify_manager
         type: cloudify.relationships.contained_in
