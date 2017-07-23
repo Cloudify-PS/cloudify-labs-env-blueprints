@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # install build
-sudu yum -y install gcc python-devel wget
+sudo yum -y install gcc python-devel wget
 
 # configure route, now and permanently
 sudo route add -net 192.168.113.0/24 gw 10.10.25.253
