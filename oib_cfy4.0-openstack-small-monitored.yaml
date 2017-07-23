@@ -49,12 +49,12 @@ node_templates:
         user: { get_input: agent_user }
     interfaces:
       maintenance:
-        suspend:
-          implementation: scripts/suspend.py
-          executor: central_deployment_agent
-        resume:
-          implementation: scripts/resume.py
-          executor: central_deployment_agent
+#        suspend:
+#          implementation: scripts/suspend.py
+#          executor: central_deployment_agent
+#        resume:
+#          implementation: scripts/resume.py
+#          executor: central_deployment_agent
     relationships:
       - target: lab_floating_ip
         type: cloudify.openstack.server_connected_to_floating_ip
