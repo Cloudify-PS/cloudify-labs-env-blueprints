@@ -1,12 +1,12 @@
 #!/bin/bash
 
+# install build
+sudu yum -y install gcc python-devel wget
+
 # generate Key
-
-
-
-sudo ssh-keygen -f /etc/cloudify/.ssh/cfy-agent-kp
-
-$publik_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp)
+sudo mkdir -p /etc/cloudify/.ssh/
+sudo ssh-keygen -f /etc/cloudify/.ssh/cfy-agent-kp -N ""
+publik_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 
 # create secrets
 

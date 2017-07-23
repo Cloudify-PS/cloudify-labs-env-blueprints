@@ -94,7 +94,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
-          implementation: scripts/proxy_install-cfy40.sh
+          implementation: scripts/proxy_install-sdn.sh
           inputs:
             public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
         start:
