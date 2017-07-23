@@ -15,3 +15,5 @@ interface=gre${interface_counter}
 ctx logger info "Connecting  bridge:${bridge} interface:${interface} to:${remote_ip}"
 
 sudo ovs-vsctl add-port ${bridge} ${interface}  -- set interface ${interface} type=gre options:remote_ip=${remote_ip}
+
+sudo bash -c echo "'ovs-vsctl add-port ${bridge} ${interface}  -- set interface ${interface} type=gre options:remote_ip=${remote_ip}' >> /etc/rc.local"
