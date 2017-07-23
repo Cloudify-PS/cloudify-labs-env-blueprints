@@ -6,7 +6,7 @@ sudu yum -y install gcc python-devel wget
 # generate Key
 sudo mkdir -p /etc/cloudify/.ssh/
 sudo ssh-keygen -f /etc/cloudify/.ssh/cfy-agent-kp -N ""
-publik_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
+publick_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 
 # create secrets
 
@@ -18,7 +18,7 @@ cfy secret create keystone_tenant_name -s admin
 cfy secret create keystone_url -s http://10.10.25.1:5000/v2.0
 cfy secret create region -s RegionOne
 cfy secret create agent_key_private -s /etc/cloudify/.ssh/cfy-agent-kp.pem
-cfy secret create agent_key_public -s "${publik_key}"
+cfy secret create agent_key_public -s "${publick_key}"
 cfy secret create private_subnet_name -s provider_subnet
 cfy secret create private_network_name -s provider
 cfy secret create public_subnet_name -s  private_subnet
