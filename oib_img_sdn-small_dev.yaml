@@ -136,6 +136,8 @@ node_templates:
     relationships:
       - target: cloudify_manager
         type: cloudify.relationships.contained_in
+      - target: sdn_sw_manager
+        type: cloudify.relationships.depends_on
 
 
   sdn_sw_manager:
