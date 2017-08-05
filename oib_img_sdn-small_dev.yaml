@@ -160,8 +160,42 @@ node_templates:
       - target: lab_server
         type: cloudify.relationships.contained_in
 
+  # analytics:
+  #   type: cloudify.nodes.ApplicationModule
+  #   interfaces:
+  #     cloudify.interfaces.lifecycle:
+  #       configure:
+  #         implementation: scripts/mng41/install_analytics.sh
+  #   relationships:
+  #     - target: cloudify_manager
+  #       type: cloudify.relationships.contained_in
+  #     - target: oib_cloudify_config
+  #       type: cloudify.relationships.depends_on  
+
+  guides:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/mng41/install_guides.sh
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on  
 
 
+  mist-io:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/mng41/install_mist_io.sh
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on 
 
 ###
 # Visual nodes
