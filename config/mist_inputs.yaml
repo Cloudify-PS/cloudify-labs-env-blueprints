@@ -7,14 +7,14 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # The IP address of the Cloudify Manager.
-manager_host: ''
+manager_host: '127.0.0.1'
 
 # The username and password of a Cloudify Manager user. This set of credentials
 # is required during installation, as well as for resource identification needs
 # later on. It is advised that a user with adequate rights is used (admin) in
 # order to avoid configuration errors.
-#manager_username: 'admin'
-#manager_password: 'admin'
+manager_username: 'admin'
+manager_password: 'nEQSwrbNPz1w'
 
 # The tenant the aforementioned user belongs to.
 #manager_tenant: 'default_tenant'
@@ -34,8 +34,8 @@ manager_host: ''
 
 # By default, users are required to provide a name and an e-mail address in
 # order to create a new account.
-user_name: ''
-user_email: ''
+user_name: 'omer fogel'
+user_email: 'omer@gigaspaces.com'
 
 # Alternatively, in case one wants to:
 # 1. use an existing account or
@@ -72,12 +72,12 @@ credentials:
 #    title: 'DigitalOcean'
 #    token: ''
 
-#  openstack:
-#    title: 'OpenStack'
-#    url: ''
-#    username: ''
-#    password: ''
-#    tenant: ''
+# openstack:
+    title: 'OpenStack'
+    url: 'localhost/dashboard'
+    username: 'admin'
+    password: 'cloudify1234'
+    tenant: 'admin'
 #    region: ''  # optional
 #    compute_endpoint: ''  # optional
 
