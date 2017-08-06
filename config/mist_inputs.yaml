@@ -34,8 +34,8 @@ manager_password: 'nEQSwrbNPz1w'
 
 # By default, users are required to provide a name and an e-mail address in
 # order to create a new account.
-user_name: 'omer fogel'
-user_email: 'omer@gigaspaces.com'
+#user_name: ''
+#user_email: ''
 
 # Alternatively, in case one wants to:
 # 1. use an existing account or
@@ -43,8 +43,8 @@ user_email: 'omer@gigaspaces.com'
 # then `user_exists` must be set to `true`. In that case, an authentication
 # token has to be provided. Tokens can be retrieved by executing `cfy local
 # outputs` at an existing installation of the AMQP Middleware.
-#user_exists: false
-#user_token: ''
+user_exists: true
+user_token: 'b4804dee1cdc355b4872f0dd2519607cf5cdac5d722ee513ce170ebae9572155'
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                              Cloud Credentials                              #
