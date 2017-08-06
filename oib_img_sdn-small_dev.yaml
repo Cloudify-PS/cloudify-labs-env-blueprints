@@ -42,11 +42,11 @@ inputs:
 
   use_guides:
     type: integer
-    default: 1
+    default: 0
 
   use_analytics:
     type: integer
-    default: 1
+    default: 0
 
 node_templates:
 
