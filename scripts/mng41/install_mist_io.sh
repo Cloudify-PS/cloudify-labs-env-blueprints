@@ -2,7 +2,7 @@
 
 sudo yum install git -y
 
-sudo mkdir -p ~/mist
+mkdir -p ~/mist
 cd ~/mist
 
 git clone --depth 1 --single-branch --branch v1.1.0 https://gitlab.ops.mist.io/mistio/amqp-middleware-blueprints.git

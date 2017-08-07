@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-NAME=$(ctx deployment id)
-SCRIPT_PATH=$(ctx download-resource "scripts/update_name.py")
-HTML_PATH=$(ctx download-resource "config/index_guides.html")
+SCRIPT_PATH=$(ctx download-resource "scripts/mng41/install_guides.py")
 
-sudo mv ${HTML_PATH} /opt/cloudify-stage/dist/index.html
-sudo python ${SCRIPT_PATH} ${NAME}
+sudo python ${SCRIPT_PATH}

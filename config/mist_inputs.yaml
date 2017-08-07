@@ -34,8 +34,8 @@ manager_password: 'nEQSwrbNPz1w'
 
 # By default, users are required to provide a name and an e-mail address in
 # order to create a new account.
-#user_name: ''
-#user_email: ''
+user_name: 'cloudify-lab'
+user_email: 'cloudify-labs@gigaspaces.com'
 
 # Alternatively, in case one wants to:
 # 1. use an existing account or
@@ -72,7 +72,7 @@ credentials:
 #    title: 'DigitalOcean'
 #    token: ''
 
-# openstack:
+ openstack:
     title: 'OpenStack'
     url: 'localhost/dashboard'
     username: 'admin'
