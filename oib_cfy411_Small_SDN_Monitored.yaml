@@ -208,21 +208,21 @@ node_templates:
         type: cloudify.relationships.depends_on
 
 
-  mist-io:
-    type: cloudify.nodes.ApplicationModule
-    capabilities:
-      scalable:
-        properties:
-          default_instances: { get_input: use_mist }
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        configure:
-          implementation: scripts/mng41/install_mist_io.sh
-    relationships:
-      - target: cloudify_manager
-        type: cloudify.relationships.contained_in
-      - target: oib_cloudify_config
-        type: cloudify.relationships.depends_on
+#  mist-io:
+#    type: cloudify.nodes.ApplicationModule
+#    capabilities:
+#      scalable:
+#        properties:
+#          default_instances: { get_input: use_mist }
+#    interfaces:
+#      cloudify.interfaces.lifecycle:
+#        configure:
+#          implementation: scripts/mng41/install_mist_io.sh
+#    relationships:
+#      - target: cloudify_manager
+#        type: cloudify.relationships.contained_in
+#      - target: oib_cloudify_config
+#        type: cloudify.relationships.depends_on
 
 ###
 # Visual nodes
