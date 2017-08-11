@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+DEP=$(ctx deployment id)
+
+MAIL=${DEP##*LabCertified-}
+MAIL=${MAIL%-*}
+
+NAME=${MAIL##*@}
 
 sudo yum install git -y
 
@@ -13,7 +19,13 @@ INPUTS=$(ctx download-resource "config/mist_inputs.yaml")
 
 sudo mv ${INPUTS} inputs/local-blueprint-inputs.yaml
 
+ctx logger info "this is mail: ${MAIL}"
+
+sed -i "s/lab-username/${NAME}/g" inputs/local-blueprint-inputs.yaml
+sed -i "s/lab-mail/${MAIL}/g" inputs/local-blueprint-inputs.yaml
+
+
+cfy profiles use local
+
 cfy install local-blueprint.yaml -i inputs/local-blueprint-inputs.yaml
 
-
-cfy outputs

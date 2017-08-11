@@ -38,7 +38,7 @@ inputs:
 # setting those inputs to 0 will avoid of installing those components.
   use_mist:
     type: integer
-    default: 0
+    default: 1
 
   use_guides:
     type: integer

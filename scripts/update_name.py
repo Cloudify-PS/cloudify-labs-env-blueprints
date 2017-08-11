@@ -34,7 +34,7 @@ else:
 with open('/opt/cloudify-stage/dist/index.html', 'r') as f:
     filedata = f.read()
 # Replace the target string
-filedata = filedata.replace('Cloudify UI', ('Cloudify UI - cloudify-lab: '+lab_name))
+filedata = filedata.replace('Cloudify UI', ('Cloudify UI - cloudify-lab - '+lab_name))
 # Write the file out again
 with open('/opt/cloudify-stage/dist/index.html', 'w') as f:
     f.write(filedata)

@@ -14,7 +14,7 @@ manager_host: '127.0.0.1'
 # later on. It is advised that a user with adequate rights is used (admin) in
 # order to avoid configuration errors.
 manager_username: 'admin'
-manager_password: 'nEQSwrbNPz1w'
+manager_password: 'admin'
 
 # The tenant the aforementioned user belongs to.
 #manager_tenant: 'default_tenant'
@@ -34,8 +34,8 @@ manager_password: 'nEQSwrbNPz1w'
 
 # By default, users are required to provide a name and an e-mail address in
 # order to create a new account.
-user_name: 'cloudify-lab'
-user_email: 'cloudify-labs@gigaspaces.com'
+user_name: 'lab-username'
+user_email: 'lab-mail'
 
 # Alternatively, in case one wants to:
 # 1. use an existing account or
@@ -43,8 +43,8 @@ user_email: 'cloudify-labs@gigaspaces.com'
 # then `user_exists` must be set to `true`. In that case, an authentication
 # token has to be provided. Tokens can be retrieved by executing `cfy local
 # outputs` at an existing installation of the AMQP Middleware.
-user_exists: true
-user_token: 'b4804dee1cdc355b4872f0dd2519607cf5cdac5d722ee513ce170ebae9572155'
+#user_exists: true
+#user_token: 'b6be247f18512112e5cc33774c408cb7b983103d4b73b15ef973316b869c9995'
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                              Cloud Credentials                              #
@@ -74,11 +74,11 @@ credentials:
 
  openstack:
     title: 'OpenStack'
-    url: 'localhost/dashboard'
+    url: 'http://10.10.25.1:5000/v2.0'
     username: 'admin'
     password: 'cloudify1234'
     tenant: 'admin'
-#    region: ''  # optional
+    region: 'RegionOne'  # optional
 #    compute_endpoint: ''  # optional
 
 #  azure:
