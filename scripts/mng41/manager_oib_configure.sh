@@ -19,7 +19,10 @@ route add -net 192.168.113.0/24 gw 10.10.25.253
 # create secrets
 
 cfy secret create ubuntu_trusty_image -s 05bb3a46-ca32-4032-bedd-8d7ebd5c8100
+cfy secret create centos_core_image -s aee5438f-1c7c-497f-a11e-53360241cf0f
 cfy secret create small_image_flavor -s 4d798e17-3439-42e1-ad22-fb956ec22b54
+cfy secret create medium_image_flavor -s 62ed898b-0871-481a-9bb4-ac5f81263b33
+cfy secret create large_image_flavor -s 62ed898b-0871-481a-9bb4-ac5f81263b33
 cfy secret create keystone_username -s admin
 cfy secret create keystone_password -s 'cloudify1234'
 cfy secret create keystone_tenant_name -s admin
