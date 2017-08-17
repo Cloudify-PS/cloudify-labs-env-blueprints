@@ -71,11 +71,11 @@ node_templates:
     interfaces:
       maintenance:
         suspend:
-          implementation: scripts/suspend.py
-          executor: central_deployment_agent
+#          implementation: scripts/suspend.py
+#          executor: central_deployment_agent
         resume:
-          implementation: scripts/resume.py
-          executor: central_deployment_agent
+#          implementation: scripts/resume.py
+#          executor: central_deployment_agent
     relationships:
       - target: lab_floating_ip
         type: cloudify.openstack.server_connected_to_floating_ip
