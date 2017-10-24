@@ -20,7 +20,7 @@ inputs:
 
   oib_flavor_id:
     type: string
-    default: '43cd6128-1fd7-423d-aac9-b69dd14734a2' # 8CPU 16GBRAM
+    default: 'f7cfaaa8-e2db-4f9b-a65b-6a407f340960' # 8CPU 16GBRAM
 
   manager_image_id:
     type: string
