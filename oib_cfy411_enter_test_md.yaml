@@ -1,0 +1,286 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - http://www.getcloudify.org/spec/openstack-plugin/1.5/plugin.yaml
+  - http://www.getcloudify.org/spec/diamond-plugin/1.3.3/plugin.yaml
+  - types/aios.yaml
+  - types/ovs.yaml
+
+inputs:
+
+
+
+  oib_image_id:
+    type: string
+    default: 'd4247d24-94da-4476-8bc6-c973e146a694'
+
+  oib_flavor_id:
+    type: string
+    default: '60' # 8CPU 16GBRAM
+
+  manager_image_id:
+    type: string
+    default: '9cfc4f54-2da4-4d89-8e19-7d7e8abc3e7e'
+
+  manager_flavor_id:
+    type: string
+    default: '50' # 4CPU 8GBRAM 320GB
+
+  agent_user:
+    type: string
+    default: 'centos'
+
+  lab_security_group_name:
+    type: string
+    default: 'lab_sg'
+
+
+# setting those inputs to 0 will avoid of installing those components.
+  use_mist:
+    type: integer
+    default: 0
+
+  use_guides:
+    type: integer
+    default: 1
+
+  use_analytics:
+    type: integer
+    default: 1
+
+node_templates:
+
+
+
+
+  lab_floating_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+
+  lab_security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      use_external_resource: True
+      resource_id: { get_input: lab_security_group_name }
+
+  lab_server:
+    type: aios.nodes.MonitoredServer
+    properties:
+      server:
+        image: { get_input: oib_image_id }
+        flavor: { get_input: oib_flavor_id }
+      cloudify_agent:
+        user: { get_input: agent_user }
+    interfaces:
+      maintenance:
+        suspend:
+#          implementation: scripts/suspend.py
+#          executor: central_deployment_agent
+        resume:
+#          implementation: scripts/resume.py
+#          executor: central_deployment_agent
+    relationships:
+      - target: lab_floating_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+
+
+  cloudify_manager:
+    type: aios.nodes.MonitoredServer
+    properties:
+      server:
+        image: { get_input: manager_image_id }
+        flavor: { get_input: manager_flavor_id }
+      cloudify_agent:
+        user: { get_input: agent_user }
+    interfaces:
+      maintenance:
+        suspend:
+          implementation: scripts/suspend.py
+          executor: central_deployment_agent
+        resume:
+          implementation: scripts/resume.py
+          executor: central_deployment_agent
+    relationships:
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+
+  rproxy:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: scripts/proxy_install-sdn.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+        start:
+          implementation: scripts/proxy_start.sh
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+
+  webconsole:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: scripts/webc_install.sh
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+
+  vpn:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/vpn_configure.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+  oib_cloudify_config:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/mng41/manager_oib_configure.sh
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+      - target: sdn_sw_manager
+        type: cloudify.relationships.depends_on
+
+
+  sdn_sw_manager:
+    type:  ovs.nodes.vswitch
+    properties:
+      ipaddr: 10.10.25.15
+      netmask: 255.255.255.0
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+      - target: sdn_sw_oib
+        type: ovs.relationships.vswitch_gre
+
+  sdn_sw_oib:
+    type:  ovs.nodes.vswitch
+    properties:
+      use_external_resource: True
+      resource_id: br-mng
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+  analytics:
+    type: cloudify.nodes.ApplicationModule
+    capabilities:
+      scalable:
+        properties:
+          default_instances: { get_input: use_analytics }
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/mng41/install_analytics.sh
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on
+
+  guides:
+    type: cloudify.nodes.ApplicationModule
+    capabilities:
+      scalable:
+        properties:
+          default_instances: { get_input: use_guides }
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: scripts/mng41/install_guides.sh
+          inputs:
+            use_sudo: true
+    relationships:
+      - target: cloudify_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on
+
+
+#  mist-io:
+#    type: cloudify.nodes.ApplicationModule
+#    capabilities:
+#      scalable:
+#        properties:
+#          default_instances: { get_input: use_mist }
+#    interfaces:
+#      cloudify.interfaces.lifecycle:
+#        configure:
+#          implementation: scripts/mng41/install_mist_io.sh
+#    relationships:
+#      - target: cloudify_manager
+#        type: cloudify.relationships.contained_in
+#      - target: oib_cloudify_config
+#        type: cloudify.relationships.depends_on
+
+###
+# Visual nodes
+
+
+  openstack:
+    type: cloudify.nodes.ApplicationServer
+    relationships:
+      - target: lab_server
+        type: cloudify.relationships.contained_in
+
+
+outputs:
+
+  Cloudify_Manager_URL:
+    description: Cloudify Manager URL
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+
+  Cloudify_Manager_Credentials:
+    description: admins password
+    value: "Username: admin Password: admin"
+
+  Cloudify_Composer_URL:
+    description: Composer URL
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, ":8443/" ] }
+
+
+  Openstack_Dashboard_URL:
+    description: Openstach Horizon URL
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+
+#  WebConsole_URL:
+#    description: WebConsole
+#    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/webc" ] }
+
+#  WebConsole_Credentials:
+#    description: Web Console Auth
+#    value: "Login: cloudify Password: Se010203!"
+
+  OpenVPN_EndPoint_IP:
+    description: VPN end point IP
+    value: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+
+  Provisioned_Resource_Access:
+    value: "To access provisioned VM's VPN Connection is needed, use OpenVPN_Configuration"
+
+  Openstack_Dashboard_Credentials:
+    value: "User: admin Password: cloudify1234"
+
+#  Documentation:
+#    value: "https://goo.gl/Wx3OEq" # default presentation
+#    value: "https://goo.gl/4m507z" # cfy4 presentation
+
+  OpenVPN_Configuration:
+    description: Configuration Download
+    value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
