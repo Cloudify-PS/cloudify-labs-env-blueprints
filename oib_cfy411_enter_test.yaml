@@ -28,7 +28,7 @@ inputs:
 
   manager_flavor_id:
     type: string
-    default: '350' # 4CPU 8GBRAM 25GB-SSD
+    default: '50' # 4CPU 8GBRAM 320GB
 
   agent_user:
     type: string
