@@ -24,7 +24,7 @@ inputs:
 
   manager_image_id:
     type: string
-    default: '43cd6128-1fd7-423d-aac9-b69dd14734a2'
+    default: '6487d8c6-1d4c-4e48-86c4-9079a208e878'
 
   manager_flavor_id:
     type: string
