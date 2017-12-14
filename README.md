@@ -1,1 +1,0 @@
-# cloudify-labs-env-blueprints
