@@ -250,9 +250,6 @@ node_templates:
       - target: oib_cloudify_config
         type: cloudify.relationships.depends_on
 
-
-
-outputs:
 outputs:
 
   integration:
@@ -267,7 +264,7 @@ outputs:
   lab_env:
     description: Openstack Cloudify Lab
     value:
-      video: https://www.youtube.com/embed/vrDkmxD3bco
+      video: https://www.youtube.com/embed/psJhdw78kkw
       suspend: false
 
   lab_ui_outputs:
@@ -279,6 +276,9 @@ outputs:
             value: 'username: admin password: admin'
           - name: 'Cloudify Manager Link'
             value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+          - name: 'CLI command'
+            value: { concat: ["cfy profiles use " , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
+
 
       - title: 'VPN Coniguration'
         open: no
@@ -288,12 +288,12 @@ outputs:
           - name: 'VPN Poratl'
             value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
           - name: 'VPN Guide'
-            value: 'http://20.20.30.10/guides/vpn.html'
+            value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/Guides/VPN+Guide.pdf'
 
       - title: 'Lab Openstack IaaS'
         open: no
         items:
+          - name: 'Openstach Dashboard Credentials'
+            value: 'username: admin password: cloudify1234'
           - name: 'Openstack Dashboard'
             value:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
-          - name: 'Lab Openstack Guide'
-            value: 'http://20.20.30.10/guides/openstack.html'
