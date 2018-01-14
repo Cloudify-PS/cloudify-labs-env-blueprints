@@ -293,7 +293,7 @@ outputs:
       - title: 'Lab Openstack IaaS'
         open: no
         items:
-          - name: 'Openstach Dashboard Credentials'
+          - name: 'Openstack Dashboard Credentials'
             value: 'username: admin password: cloudify1234'
           - name: 'Openstack Dashboard'
             value:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }

@@ -66,6 +66,6 @@ env -i cfy plugins upload http://repository.cloudifysource.org/cloudify/wagons/c
 ctx logger info "Uploading Openstack Plugins"
 env -i cfy plugins upload http://repository.cloudifysource.org/cloudify/wagons/cloudify-openstack-plugin/2.0.1/cloudify_openstack_plugin-2.0.1-py27-none-linux_x86_64-centos-Core.wgn > /tmp/cfy_status.txt 2>&1
 env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.2.0/cloudify_openstack_plugin-2.2.0-py27-none-linux_x86_64-centos-Core.wgn > /tmp/cfy_status.txt 2>&1
-env -i https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.5.0/cloudify_openstack_plugin-2.5.0-py27-none-linux_x86_64-centos-Core.wgn > /tmp/cfy_status.txt 2>&1
+env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.5.0/cloudify_openstack_plugin-2.5.0-py27-none-linux_x86_64-centos-Core.wgn > /tmp/cfy_status.txt 2>&1
 
 ctx logger info "Script Ends"
