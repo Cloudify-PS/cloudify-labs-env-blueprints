@@ -16,6 +16,9 @@ sudo ssh-keygen -f /etc/cloudify/.ssh/cfy-agent-kp -N ""
 sudo chown cfyuser:cfyuser -R /etc/cloudify/.ssh
 publick_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 
+# Add manager key to authorized_keys for centos user
+sudo cat $publick_key >> /home/centos/.ssh/authorized_keys
+
 env -i cfy status > /tmp/cfy_status.txt 2>&1
 
 # create secrets
@@ -34,7 +37,10 @@ env -i cfy secret create keystone_tenant_name -s admin > /tmp/cfy_status.txt 2>&
 env -i cfy secret create keystone_url -s http://10.10.25.1:5000/v2.0 > /tmp/cfy_status.txt 2>&1
 env -i cfy secret create region -s RegionOne > /tmp/cfy_status.txt 2>&1
 
-env -i cfy secret create agent_key_private -s /etc/cloudify/.ssh/cfy-agent-kp > /tmp/cfy_status.txt 2>&1
+#env -i cfy secret create agent_key_private -s /etc/cloudify/.ssh/cfy-agent-kp > /tmp/cfy_status.txt 2>&1
+
+# Create private_key as plain secret
+env -i cfy secret create agent_key_private --secret-file /etc/cloudify/.ssh/cfy-agent-kp > /tmp/cfy_status.txt 2>&1
 env -i cfy secret create agent_key_public --secret-file /etc/cloudify/.ssh/cfy-agent-kp.pub > /tmp/cfy_status.txt 2>&1
 
 env -i cfy secret create private_subnet_name -s provider_subnet > /tmp/cfy_status.txt 2>&1
