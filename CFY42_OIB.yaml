@@ -6,6 +6,7 @@ imports:
   - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-diamond-plugin/1.3.5/plugin.yaml
   - types/oib_openstack.yaml
   - components/ovs/types.yaml
+  - components/CentOS7/types.yaml
 
 inputs:
 
@@ -215,6 +216,31 @@ node_templates:
     relationships:
       - target: oib_server
         type: cloudify.relationships.contained_in
+
+  remote_access:
+    type: CentOS.ssh.RemotePortForward
+    relationships:
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on
+
+  external_network:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation:  components/CFYManager4x/scripts/add_external_network.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+            use_sudo: true
+    relationships:
+      - target: remote_access
+        type: cloudify.relationships.depends_on
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+
+
 
   analytics:
     type: cloudify.nodes.ApplicationModule

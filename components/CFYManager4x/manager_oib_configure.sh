@@ -13,6 +13,8 @@ sudo /bin/bash -c "echo '192.168.113.0/24 via 10.10.25.253 dev br-ovs' >> /etc/s
 ctx logger info "Generating Keys"
 sudo mkdir -p /etc/cloudify/.ssh/
 sudo ssh-keygen -f /etc/cloudify/.ssh/cfy-agent-kp -N ""
+sudo cp /etc/cloudify/.ssh/cfy-agent-kp /etc/cloudify/.ssh/cfy-agent-kp.cp
+sudo chmod 644 /etc/cloudify/.ssh/cfy-agent-kp.cp
 sudo chown cfyuser:cfyuser -R /etc/cloudify/.ssh
 public_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 
@@ -40,7 +42,7 @@ env -i cfy secret create region -s RegionOne >> /tmp/cfy_status.txt 2>&1
 #env -i cfy secret create agent_key_private -s /etc/cloudify/.ssh/cfy-agent-kp > /tmp/cfy_status.txt 2>&1
 
 # Create private_key as plain secret
-sudo env -i cfy secret create agent_key_private --secret-file /etc/cloudify/.ssh/cfy-agent-kp >> /tmp/cfy_status.txt 2>&1
+env -i cfy secret create agent_key_private --secret-file /etc/cloudify/.ssh/cfy-agent-kp.cp >> /tmp/cfy_status.txt 2>&1
 env -i cfy secret create agent_key_public --secret-file /etc/cloudify/.ssh/cfy-agent-kp.pub >> /tmp/cfy_status.txt 2>&1
 
 env -i cfy secret create private_subnet_name -s provider_subnet >> /tmp/cfy_status.txt 2>&1

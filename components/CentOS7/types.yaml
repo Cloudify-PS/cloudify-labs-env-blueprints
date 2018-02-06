@@ -1,0 +1,12 @@
+node_types:
+
+  CentOS.ssh.RemotePortForward:
+    derived_from: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: components/CentOS7/scripts/remote_port_forward_config.sh
+        start:
+          implementation: components/CentOS7/scripts/remote_port_forward_start.sh
+        stop:
+          implementation: components/CentOS7/scripts/remote_port_forward_stop.sh

@@ -1,0 +1,9 @@
+[Unit]
+Description=SSH Tunnel For Port 1111
+After=network.target
+
+[Service]
+ExecStart=/bin/ssh -nNT -oStrictHostKeyChecking=no -i /root/remote.rsa -R 2222:localhost:22 -R 53333:localhost:53333 -R 5671:localhost:5671 -R 53229:localhost:53229 cloudify@10.10.25.1
+Type=simple
+
+[Install]
