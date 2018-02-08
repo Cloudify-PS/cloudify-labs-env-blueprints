@@ -233,6 +233,7 @@ node_templates:
           implementation:  components/CFYManager4x/scripts/add_external_network.sh
           inputs:
             public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+            private_ip: { get_attribute: [ cfy_manager , ip] }
             use_sudo: true
     relationships:
       - target: remote_access
