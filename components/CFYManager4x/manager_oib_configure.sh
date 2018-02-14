@@ -83,4 +83,14 @@ env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-p
 env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.6.0/cloudify_openstack_plugin-2.6.0-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.7.0/cloudify_openstack_plugin-2.7.0-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 
+
+ctx logger info "Uploading Openstack Network Plugin"
+env -i cfy blueprints upload -n simple-blueprint.yaml -b "openstack-example-network"  "https://github.com/cloudify-examples/openstack-example-network/archive/master.zip"  >> /tmp/cfy_status.txt 2>&1
+
+ctx logger info "Creating Openstack Network Deployment"
+env -i cfy deployments create -b "openstack-example-network"  "openstack-example-network" -i "external_network_name=external_network"  >> /tmp/cfy_status.txt 2>&1
+
+ctx logger info "Installing Openstack Network Deployment"
+env -i cfy executions start install -d "openstack-example-network2"  >> /tmp/cfy_status.txt 2>&1
+
 ctx logger info "Script Ends"
