@@ -222,7 +222,7 @@ node_templates:
     relationships:
       - target: cfy_manager
         type: cloudify.relationships.contained_in
-      - target: oib_cloudify_config
+      - target: sdn_sw_manager
         type: cloudify.relationships.depends_on
 
   external_network:
