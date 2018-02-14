@@ -91,6 +91,6 @@ ctx logger info "Creating Openstack Network Deployment"
 env -i cfy deployments create -b "openstack-example-network"  "openstack-example-network" -i "external_network_name=external_network"  >> /tmp/cfy_status.txt 2>&1
 
 ctx logger info "Installing Openstack Network Deployment"
-env -i cfy executions start install -d "openstack-example-network2"  >> /tmp/cfy_status.txt 2>&1
+env -i cfy executions start install -d "openstack-example-network"  >> /tmp/cfy_status.txt 2>&1
 
 ctx logger info "Script Ends"
