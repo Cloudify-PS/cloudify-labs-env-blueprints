@@ -38,6 +38,7 @@ env -i cfy secret create keystone_password -s 'cloudify1234' >> /tmp/cfy_status.
 env -i cfy secret create keystone_tenant_name -s admin >> /tmp/cfy_status.txt 2>&1
 env -i cfy secret create keystone_url -s http://10.10.25.1:5000/v2.0 >> /tmp/cfy_status.txt 2>&1
 env -i cfy secret create region -s RegionOne >> /tmp/cfy_status.txt 2>&1
+env -i cfy secret create keystone_region -s RegionOne >> /tmp/cfy_status.txt 2>&1
 
 #env -i cfy secret create agent_key_private -s /etc/cloudify/.ssh/cfy-agent-kp > /tmp/cfy_status.txt 2>&1
 
@@ -57,13 +58,11 @@ ctx logger info "Creating k8s Secrests"
 env -i cfy secret create kubernetes_master_ip -s X >> /tmp/cfy_status.txt 2>&1
 env -i cfy secret create kubernetes_certificate_authority_data -s X >> /tmp/cfy_status.txt 2>&1
 env -i cfy secret create kubernetes_master_port -s X >> /tmp/cfy_status.txt 2>&1
-env -i cfy secret create kubernetes_admin_client_key_data -s X >> /tmp/cfy_status.txt 2>&1
-env -i cfy secret create kubernetes_admin_client_certificate_data -s X >> /tmp/cfy_status.txt 2>&1
+env -i cfy secret create kubernetes-admin_client_key_data -s X >> /tmp/cfy_status.txt 2>&1
+env -i cfy secret create kubernetes-admin_client_certificate_data -s X >> /tmp/cfy_status.txt 2>&1
 
 # Upload Default Plugins
 ctx logger info "Uploading Utilities"
-env -i cfy plugins upload https://github.com/cloudify-incubator/cloudify-utilities-plugin/releases/download/1.2.5/cloudify_utilities_plugin-1.2.5-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
-env -i cfy plugins upload https://github.com/cloudify-incubator/cloudify-utilities-plugin/releases/download/1.3.0/cloudify_utilities_plugin-1.3.0-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 env -i cfy plugins upload https://github.com/cloudify-incubator/cloudify-utilities-plugin/releases/download/1.4.5/cloudify_utilities_plugin-1.4.5-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 
 
@@ -78,6 +77,7 @@ ctx logger info "Uploading Fabric Plugins"
 env -i cfy plugins upload http://repository.cloudifysource.org/cloudify/wagons/cloudify-fabric-plugin/1.5/cloudify_fabric_plugin-1.5-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 
 ctx logger info "Uploading Openstack Plugins"
+
 env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.2.0/cloudify_openstack_plugin-2.2.0-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.5.0/cloudify_openstack_plugin-2.5.0-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.6.0/cloudify_openstack_plugin-2.6.0-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
