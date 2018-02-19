@@ -1,6 +1,8 @@
 #!/bin/bash
 
 env -i cfy plugins upload "https://github.com/EarthmanT/cloudify-dblb/releases/download/0.2/cloudify_dblb-0.2-py27-none-linux_x86_64-centos-Core.wgn" >> /tmp/cfy_status.txt 2>&1
+env -i cfy plugins upload "https://github.com/cloudify-incubator/cloudify-awssdk-plugin/releases/download/1.2.0.3/cloudify_awssdk_plugin-1.2.0.3-py27-none-linux_x86_64-centos-Core.wgn" >> /tmp/cfy_status.txt 2>&1
+env -i cfy plugins upload "https://github.com/cloudify-cosmo/cloudify-aws-plugin/releases/download/1.5.1.2/cloudify_aws_plugin-1.5.1.2-py27-none-linux_x86_64-centos-Core.wgn" >> /tmp/cfy_status.txt 2>&1
 
 env -i cfy blueprints upload -n update-blueprint.yaml -b "aws-example-network"        "https://github.com/cloudify-examples/aws-example-network/archive/master.zip"  >> /tmp/cfy_status.txt 2>&1
 env -i cfy blueprints upload -n aws.yaml              -b "db"        "https://github.com/cloudify-examples/mariadb-blueprint/archive/master.zip"  >> /tmp/cfy_status.txt 2>&1
