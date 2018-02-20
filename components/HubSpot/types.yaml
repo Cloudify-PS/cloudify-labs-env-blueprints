@@ -1,0 +1,26 @@
+node_types:
+  hubspot.form.Submit:
+    derived_from: cloudify.rest.Requests
+    properties:
+      hosts:
+        default: ['forms.hubspot.com']
+      ssl:
+        default: true
+      form_guid:
+        default: ""
+      portal_id:
+        default: ""
+      params:
+        default: {}
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+           implementation: rest.cloudify_rest.tasks.execute
+           inputs:
+             template_file:
+               default: "components/HubSpot/templates/form_submit.yaml"
+             params:
+               default:
+                 form_guid: { get_property: [SELF, form_guid] }
+                 portal_id: { get_property: [SELF, portal_id] }
+                 params:  { get_property: [SELF, params] }

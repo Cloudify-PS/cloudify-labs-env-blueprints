@@ -5,12 +5,12 @@ imports:
 
 node_templates:
 
-  oib_mcac_config:
+  oib_NodeCellar_config:
     type: cloudify.nodes.ApplicationModule
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: components/DruPal_Lab/scripts/manager_configure.sh
+          implementation: components/NodeCellar_Lab/scripts/manager_config.sh
     relationships:
       - target: cfy_manager
         type: cloudify.relationships.contained_in

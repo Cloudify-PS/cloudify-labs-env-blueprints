@@ -1,0 +1,17 @@
+rest_calls:
+  - path: /uploads/form/v2/{{portal_id}}/{{form_guid}}
+    method: POST
+    headers:
+      Content-Type: "application/x-www-form-urlencoded"
+
+    payload_format: "urlencode"
+    payload:
+      email: "{{params['Email']}}"
+      firstname: "{{params['FirstName']}}"
+      lastname: "{{params['LastName']}}"
+
+    response_format: raw
+    response_expectation:
+        - ['status',"200"]
+        - ['status',"202"]
+        - ['message', "Success"]

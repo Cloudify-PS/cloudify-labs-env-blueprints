@@ -4,11 +4,33 @@ imports:
   - http://www.getcloudify.org/spec/cloudify/4.2/types.yaml
   - http://www.getcloudify.org/spec/openstack-plugin/2.4.1/plugin.yaml
   - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-diamond-plugin/1.3.5/plugin.yaml
+  - https://raw.githubusercontent.com/cloudify-incubator/cloudify-utilities-plugin/81-add-rest-plugin/plugin.yaml
   - types/oib_openstack.yaml
   - components/ovs/types.yaml
   - components/CentOS7/types.yaml
+  - components/HubSpot/types.yaml
 
 inputs:
+
+  customer_token:
+    type: string
+    default: "AA"
+
+  customer_name:
+    type: string
+    default: 'MrCustomer'
+
+  customer_email:
+    type: string
+    default: test@cloudify.co
+
+  hubspot_portal:
+    type: string
+    default: "1918719"
+
+  hubspot_form:
+    type: string
+    default: 74f1a2ca-923d-4eae-aa9e-e0b810788d56
 
   oib_volume_type:
     type: string
@@ -62,6 +84,21 @@ dsl_definitions:
 
 
 node_templates:
+
+##
+## Hub spot integration
+##################
+
+  hs_registration:
+    type: hubspot.form.Submit
+    properties:
+      portal_id: { get_input: hubspot_portal }
+      form_guid: { get_input: hubspot_form }
+      params:
+              FirstName:  { get_input: customer_name }
+              LastName: " "
+              Email: { get_input: customer_email }
+
 
 ##
 ## Servers
