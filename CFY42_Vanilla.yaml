@@ -5,24 +5,6 @@ imports:
 
 node_templates:
 
-  oib_mcac_config:
-    type: cloudify.nodes.ApplicationModule
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        configure:
-          implementation: components/mcac/scripts/manager_configure.sh
-    relationships:
-      - target: cfy_manager
-        type: cloudify.relationships.contained_in
-      - target: oib_cloudify_config
-        type: cloudify.relationships.depends_on
-      - target: guides
-        type: cloudify.relationships.depends_on
-      - target: analytics
-        type: cloudify.relationships.depends_on
-      - target: external_network
-        type: cloudify.relationships.depends_on
-
 
 outputs:
 
@@ -44,11 +26,6 @@ outputs:
   lab_ui_outputs:
     value:
 
-      - title: 'Lab Documentation'
-        open: yes
-        items:
-          - name: 'Multi-Cloud with Governance Lab Guide'
-            value: 'https://cloudify.co/knowledge-base/knowledge-base-multi-cloud-governance-solution/'
 
       - title: 'Cloudify Manager'
         open: yes
@@ -74,7 +51,7 @@ outputs:
       - title: 'Lab OpenStack IaaS'
         open: no
         items:
-          - name: 'Openstack Dashboard Credentials'
+          - name: 'OpenStack Dashboard Credentials'
             value: 'username: admin password: cloudify1234'
-          - name: 'Openstack Dashboard'
+          - name: 'OpenStack Dashboard'
             value:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
