@@ -2,7 +2,7 @@
 
 REPO=https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/MCAC/
 
-for plugin in `curl $REPO`; do
+for plugin in `curl $REPO | grep wgn`; do
 
 ctx logger info "Uploading Plugin $plugin "
 env -i cfy plugins upload  $REPO$plugin >> /tmp/cfy_status.txt 2>&1

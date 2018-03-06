@@ -87,12 +87,14 @@ env -i cfy secret create kubernetes-admin_client_certificate_data -s X >> /tmp/c
 #env -i cfy plugins upload https://github.com/cloudify-cosmo/cloudify-openstack-plugin/releases/download/2.7.0/cloudify_openstack_plugin-2.7.0-py27-none-linux_x86_64-centos-Core.wgn >> /tmp/cfy_status.txt 2>&1
 
 
-for plugin in `curl $REPO | grep wgn`; do
+#for plugin in `curl $REPO`; do
+#
+#ctx logger info "Uploading Plugin $plugin "
+#env -i cfy plugins upload  $REPO$plugin >> /tmp/cfy_status.txt 2>&1
+#
+#done
 
-ctx logger info "Uploading Plugin $plugin "
-env -i cfy plugins upload  $REPO$plugin >> /tmp/cfy_status.txt 2>&1
-
-done
+env -i cfy plugins  bundle-upload -p https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/PluginsMD/labs-plugins-bundel.tar.gz >> /tmp/cfy_status.txt 2>&1
 
 ctx logger info "Uploading Openstack Network Plugin"
 env -i cfy blueprints upload -n simple-blueprint.yaml -b "openstack-example-network"  "https://github.com/cloudify-examples/openstack-example-network/archive/master.zip"  >> /tmp/cfy_status.txt 2>&1
