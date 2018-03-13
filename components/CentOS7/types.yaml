@@ -10,3 +10,20 @@ node_types:
           implementation: components/CentOS7/scripts/remote_port_forward_start.sh
         stop:
           implementation: components/CentOS7/scripts/remote_port_forward_stop.sh
+
+  CentOS.files.ArchiveFileUpload:
+    derived_from: cloudify.nodes.ApplicationModule
+    properties:
+      archive:
+        default: ""
+      target_path:
+        default: "/tmp"
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          implementation: components/CentOS7/scripts/arch_file_upload_start.sh
+          inputs:
+            archive:
+              default: { get_property: [SELF, archive ] }
+            target_path:
+              default: { get_property: [SELF, target_path ] }

@@ -287,7 +287,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
-          implementation:  components/CFYManager4x/scripts/add_external_network.sh
+          implementation:  components/CFYManager43/scripts/add_external_network.sh
           inputs:
             public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
             private_ip: { get_attribute: [ cfy_manager , ip] }
