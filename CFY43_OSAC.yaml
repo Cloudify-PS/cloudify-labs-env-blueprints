@@ -2,41 +2,26 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - CFY43_OIB.yaml
-  - components/PGSQL/types.yaml
-
-inputs:
-  ui_archive:
-    default: "https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/customizations/welcome_13032018/dist_welcome_13032018.tar.gz"
-
-  ui_settings:
-    default: "https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/customizations/welcome_13032018/stage_data_welcome_15032018.sql"
-
 
 node_templates:
 
-  ui_components:
-    type: CentOS.files.ArchiveFileUpload
-    properties:
-      archive: { get_input: ui_archive }
-      target_path: "/opt/cloudify-stage/dist"
+  oib_mcac_config:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: components/mcac43/scripts/manager_configure_os.sh
     relationships:
       - target: cfy_manager
         type: cloudify.relationships.contained_in
       - target: oib_cloudify_config
         type: cloudify.relationships.depends_on
-
-
-  ui_settings:
-    type: PGSQL.sql.database
-    properties:
-      database: "stage"
-      sql_file_start: { get_input: ui_settings }
-    relationships:
-      - target: cfy_manager
-        type: cloudify.relationships.contained_in
-      - target: oib_cloudify_config
+      - target: guides
         type: cloudify.relationships.depends_on
-
+      - target: analytics
+        type: cloudify.relationships.depends_on
+      - target: external_network
+        type: cloudify.relationships.depends_on
 
 
 outputs:
@@ -58,6 +43,13 @@ outputs:
 
   lab_ui_outputs:
     value:
+
+      - title: 'Lab Documentation'
+        open: yes
+        items:
+          - name: 'Multi-Cloud with Governance Lab Guide'
+            value: 'https://cloudify.co/knowledge-base/knowledge-base-multi-cloud-governance-solution/'
+
       - title: 'Cloudify Manager'
         open: yes
         items:
@@ -82,7 +74,7 @@ outputs:
       - title: 'Lab OpenStack IaaS'
         open: no
         items:
-          - name: 'OpenStack Dashboard Credentials'
+          - name: 'Openstack Dashboard Credentials'
             value: 'username: admin password: cloudify1234'
-          - name: 'OpenStack Dashboard'
+          - name: 'Openstack Dashboard'
             value:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }

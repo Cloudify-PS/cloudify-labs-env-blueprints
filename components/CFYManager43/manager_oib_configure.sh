@@ -26,6 +26,7 @@ sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub >> /home/centos/.ssh/authorized_key
 
 env -i cfy status >> /tmp/cfy_status.txt 2>&1 &
 
+
 # create secrets
 ctx logger info "Creating Secrests"
 env -i cfy secret create ubuntu_trusty_image -s 05bb3a46-ca32-4032-bedd-8d7ebd5c8100 >> /tmp/cfy_status.txt 2>&1 &
@@ -62,7 +63,7 @@ env -i cfy secret create kubernetes_master_ip -s X >> /tmp/cfy_status.txt 2>&1 &
 env -i cfy secret create kubernetes_certificate_authority_data -s X >> /tmp/cfy_status.txt 2>&1 &
 env -i cfy secret create kubernetes_master_port -s X >> /tmp/cfy_status.txt 2>&1 &
 env -i cfy secret create kubernetes-admin_client_key_data -s X >> /tmp/cfy_status.txt 2>&1 &
-env -i cfy secret create kubernetes-admin_client_certificate_data -s X >> /tmp/cfy_status.txt 2>&1 &
+env -i cfy secret create kubernetes-admin_client_certificate_data -s X >> /tmp/cfy_status.txt 2>&1  &
 
 # Upload Default Plugins
 #ctx logger info "Uploading Utilities"
