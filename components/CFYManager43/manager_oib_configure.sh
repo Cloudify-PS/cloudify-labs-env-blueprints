@@ -11,6 +11,9 @@ sudo yum -y install gcc python-devel wget
 ctx logger info "Setting Static routes"
 sudo route add -net 192.168.113.0/24 gw 10.10.25.253
 sudo /bin/bash -c "echo '192.168.113.0/24 via 10.10.25.253 dev br-ovs' >> /etc/sysconfig/network"
+sudo route add -net 172.25.1.0/24 gw 10.10.25.253
+sudo /bin/bash -c "echo '172.25.1.0/24 via 10.10.25.253 dev br-ovs' >> /etc/sysconfig/network"
+
 
 # generate Key
 ctx logger info "Generating Keys"
