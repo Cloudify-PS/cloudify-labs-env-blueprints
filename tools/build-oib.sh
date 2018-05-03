@@ -15,8 +15,9 @@ NIC="eth0"
 IPADDRESS=`ip a show dev $NIC | sed '3q;d' | gawk '{match($2,/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/);ip = substr($2,RSTART,RLENGTH);print ip}'`
 CONFIG_CINDER_VOLUMES_SIZE="20G"
 
-# set cloud init. Preserve hostname and hosts
-#sudo sed -i -e 's/ssh_deletekeys.*/ssh_deletekeys:   1/' /etc/cloud/cloud.cfg
+# set cloud init. disable hostname and hosts config
+sudo sed -i -e '/host/ s/^#*/#/' /etc/cloud/cloud.cfg
+
 
 cat << EOB | sudo tee /etc/cloud/cloud.cfg.d/99_hostname.cfg
 #cloud-config
@@ -27,6 +28,8 @@ EOB
 cat << EOB | sudo tee -a /etc/hosts
 10.10.25.1 $RELEASE_NAME-oib $RELEASE_NAME-oib.openstacklocal
 EOB
+
+sudo hostnamectl set-hostname $RELEASE_NAME-oib.openstacklocal
 
 # fix root's authorized_keys
 sudo sed -i -e 's/.*ssh-rsa/ssh-rsa/' /root/.ssh/authorized_keys
@@ -81,6 +84,7 @@ BOOTPROTO="dhcp"
 IPV6INIT="no"
 PERSISTENT_DHCLIENT="1"
 ONBOOT=yes
+MTU=1500
 EOB
 
 
@@ -139,6 +143,7 @@ BOOTPROTO="dhcp"
 IPV6INIT="no"
 PERSISTENT_DHCLIENT="1"
 ONBOOT=yes
+MTU=1500
 EOB
 
 cat << EOB | sudo tee /etc/sysconfig/network-scripts/ifcfg-br-mng
