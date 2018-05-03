@@ -1,26 +1,35 @@
 #!/bin/bash
 
-#Openstack flavor m1.xlarge
+# Use openstack flavor m1.xlarge
 
 #VARIABLES
+if [ -z "${1}" ]; then
+    echo "Set a release name"
+    echo "Usage: bash $0 <release name>"
+else
+    RELEASE_NAME=${1}
+fi
+
 PASSWORD="cloudify1234"
-RELEASE_NAME="pike"
 NIC="eth0"
 IPADDRESS=`ip a show dev $NIC | sed '3q;d' | gawk '{match($2,/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/);ip = substr($2,RSTART,RLENGTH);print ip}'`
 CONFIG_CINDER_VOLUMES_SIZE="20G"
 
-# set cloud init. Preserve hostname and hosts
-#sudo sed -i -e 's/ssh_deletekeys.*/ssh_deletekeys:   1/' /etc/cloud/cloud.cfg
+# set cloud init. disable hostname and hosts config
+sudo sed -i -e '/host/ s/^#*/#/' /etc/cloud/cloud.cfg
+
 
 cat << EOB | sudo tee /etc/cloud/cloud.cfg.d/99_hostname.cfg
 #cloud-config
-hostname: pike-oib
-fqdn: pike-oib.openstacklocal
+hostname: $RELEASE_NAME-oib
+fqdn: $RELEASE_NAME-oib.openstacklocal
 EOB
 
 cat << EOB | sudo tee -a /etc/hosts
-10.10.25.1 pike-oib pike-oib.openstacklocal
+10.10.25.1 $RELEASE_NAME-oib $RELEASE_NAME-oib.openstacklocal
 EOB
+
+sudo hostnamectl set-hostname $RELEASE_NAME-oib.openstacklocal
 
 # fix root's authorized_keys
 sudo sed -i -e 's/.*ssh-rsa/ssh-rsa/' /root/.ssh/authorized_keys
@@ -35,7 +44,12 @@ sudo systemctl stop NetworkManager
 sudo systemctl enable network
 sudo systemctl start network
 
-# Install Pike openstack repository
+# Install $RELEASE_NAME openstack repository
+if ! yum info centos-release-openstack-$RELEASE_NAME; then
+    echo "There is no RDO with name $RELEASE_NAME in repository"
+    exit 1
+fi
+
 sudo yum install -y centos-release-openstack-$RELEASE_NAME
 sudo yum install -y yum-utils.noarch
 sudo yum-config-manager --enable openstack-$RELEASE_NAME
@@ -70,6 +84,7 @@ BOOTPROTO="dhcp"
 IPV6INIT="no"
 PERSISTENT_DHCLIENT="1"
 ONBOOT=yes
+MTU=1500
 EOB
 
 
@@ -100,6 +115,8 @@ packstack --allinone --provision-demo=n --os-neutron-ovs-bridge-mappings=extnet:
 # Fix here IP addresses
 sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
 sed -i -e "s/CONFIG_CINDER_VOLUMES_SIZE=.*/CONFIG_CINDER_VOLUMES_SIZE=$CONFIG_CINDER_VOLUMES_SIZE/g" answers.txt
+#Change to tcp due ssh prevent to inject ssh key to new instance
+sed -i -e "s/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=ssh/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp/g" answers.txt
 packstack --answer-file=answers.txt
 sudo yum install -y openstack-utils
 
@@ -126,6 +143,7 @@ BOOTPROTO="dhcp"
 IPV6INIT="no"
 PERSISTENT_DHCLIENT="1"
 ONBOOT=yes
+MTU=1500
 EOB
 
 cat << EOB | sudo tee /etc/sysconfig/network-scripts/ifcfg-br-mng
@@ -142,6 +160,11 @@ ONBOOT=yes
 EOB
 
 sudo service network restart
+
+# rabbitmq-server.service edit
+sudo sed -i -e '/\[Service\]/a RestartSec=15s' /usr/lib/systemd/system/rabbitmq-server.service
+sudo sed -i -e '/\[Service\]/a Restart=on-failure' /usr/lib/systemd/system/rabbitmq-server.service
+sudo systemctl daemon-reload
 
 # nova config
 sudo crudini --set /etc/nova/nova.conf libvirt virt_type kvm
@@ -531,4 +554,4 @@ sudo systemctl enable openvpn@server
 # clean SSH public keys
 sudo rm -f /root/.ssh/authorized_keys
 rm -f ~/.ssh/authorized_keys
-
+history -c
