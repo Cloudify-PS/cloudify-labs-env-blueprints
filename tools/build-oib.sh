@@ -6,6 +6,7 @@
 if [ -z "${1}" ]; then
     echo "Set a release name"
     echo "Usage: bash $0 <release name>"
+    exit 1
 else
     RELEASE_NAME=${1}
 fi
