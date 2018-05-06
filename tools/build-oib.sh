@@ -266,12 +266,16 @@ sudo chown $(whoami):$(whoami) keystonerc_admin
 # Edin /etc/nova/nova.conf
 #hw_machine_type=x86_64=pc-i440fx-rhel7.4.0,x86_64=pc-i440fx-rhel7.3.0,x86_64=pc-i440fx-rhel7.2.0
 # Restart compute-api and compute
-if [[ "$RELEASE_NAME" == "Newton" ]]
+if [[ "$RELEASE_NAME" -eq "newton" ]]
 then
   sudo crudini --set /etc/nova/nova.conf libvirt hw_machine_type "x86_64=pc-i440fx-rhel7.4.0,x86_64=pc-i440fx-rhel7.3.0,x86_64=pc-i440fx-rhel7.2.0"
   sudo systemctl restart openstack-nova-compute
   sudo systemctl restart openstack-nova-api
 fi
+
+# set workaround for the bug https://bugs.launchpad.net/nova/+bug/1767139/comments/6
+sudo sed -i -e '/\[Service\]/a ExecStartPre=/bin/sleep 90' /usr/lib/systemd/system/openstack-nova-compute.service
+sudo systemctl daemon-reload
 
 
 # Create openstack external router and network
