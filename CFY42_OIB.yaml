@@ -257,6 +257,8 @@ node_templates:
         type: cloudify.relationships.contained_in
       - target: external_network
         type: cloudify.relationships.depends_on
+      - target: sdn_sw_manager
+        type: cloudify.relationships.depends_on
 
   rproxy:
     type: cloudify.nodes.ApplicationModule

@@ -51,7 +51,7 @@ inputs:
 
   manager_image_id:
     type: string
-    default: '732d023a-c557-4ed3-b399-fc6a223bed3c'
+    default: { get_secret : labs_manager_testing }
 
   manager_flavor_id:
     type: string

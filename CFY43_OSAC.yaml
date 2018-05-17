@@ -68,8 +68,8 @@ outputs:
             value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
           - name: 'VPN Portal'
             value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
-          - name: 'VPN Guide'
-            value: 'https://cloudify.co/wp-content/uploads/2018/02/VPN-Guide.pdf'
+          - name: 'VPN Configuration Guide'
+            value: 'https://cloudify.co/knowledge-base/cloudify-labs-vpn-configuration-guide/'
 
       - title: 'Lab OpenStack IaaS'
         open: no
