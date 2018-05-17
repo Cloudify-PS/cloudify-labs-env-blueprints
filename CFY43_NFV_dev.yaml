@@ -10,7 +10,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: components/nfv43/scripts/manager_configure.sh
+          implementation: components/nfv43/scripts/manager_configure_dev.sh
     relationships:
       - target: cfy_manager
         type: cloudify.relationships.contained_in
@@ -44,11 +44,13 @@ outputs:
   lab_ui_outputs:
     value:
 
-      - title: 'Cloudify VNF Lab Guide'
+      - title: 'Lab Documentation'
         open: yes
         items:
-          - name: 'Guide'
-            value: 'https://cloudify.co/knowledge-base/vnf-onboarding-lab-scenario'
+          - name: 'Lab Guidelines WIP (Cloudify Internal)'
+            value: 'https://docs.google.com/document/d/12HkaIo-wPo3e7qISHLdgGCOgltHVG6ZohQIsP7eutnY/edit?usp=sharing'
+          - name: 'Scenario Discussion (Cloudify Internal)'
+            value: 'https://docs.google.com/document/d/1sHGip3IRonunZyg8oWtxq4kOAY_sUIbk-3CMZNV2Ku0/edit?usp=sharing'
 
       - title: 'Cloudify Manager'
         open: yes

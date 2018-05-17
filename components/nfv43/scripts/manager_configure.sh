@@ -2,15 +2,15 @@
 
 # Install the webserve
 ####
-env -i cfy blueprints upload -n openstack-vm-blueprint-ws.yaml -b "private-webserver-bp" https://github.com/Cloudify-PS/private-webserver-blueprint/archive/master.zip >> /tmp/cfy_status.txt 2>&1
+env -i cfy blueprints upload -n openstack-vm-blueprint-ws.yaml -b "private-webserver-bp" https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Blueprints/NFVLAb/private-webserver-blueprint-master.zip >> /tmp/cfy_status.txt 2>&1
 env -i cfy deployments create -b "private-webserver-bp" private-webserver >> /tmp/cfy_status.txt 2>&1
 env -i cfy executions start install -d "private-webserver"  >> /tmp/cfy_status.txt 2>&1 &
 
 # Upload blueprints
 ###
-env -i cfy blueprints upload -n fortigate-vnf.yaml     -b "fortigate-vnf-bp"                     https://github.com/Cloudify-PS/nfv-scenario-blueprint/archive/master.zip >> /tmp/cfy_status.txt 2>&1
-env -i cfy blueprints upload -n openstack-vm-lan.yaml  -b "openstack-vnf-infra"  https://github.com/Cloudify-PS/nfv-scenario-blueprint/archive/master.zip >> /tmp/cfy_status.txt 2>&1
-env -i cfy blueprints upload -n fortigate-vnf-portforward-bp.yaml -b "fortigate-portforward-bp" https://github.com/Cloudify-PS/nfv-scenario-blueprint/archive/master.zip >> /tmp/cfy_status.txt 2>&1
+env -i cfy blueprints upload -n fortigate-vnf.yaml     -b "fortigate-vnf-bp"                    https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Blueprints/NFVLAb/nfv-scenario-blueprint-master.zip >> /tmp/cfy_status.txt 2>&1
+env -i cfy blueprints upload -n openstack-vm-lan.yaml  -b "openstack-vnf-infra"                 https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Blueprints/NFVLAb/nfv-scenario-blueprint-master.zip >> /tmp/cfy_status.txt 2>&1
+env -i cfy blueprints upload -n fortigate-vnf-portforward-bp.yaml -b "fortigate-portforward-bp" https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Blueprints/NFVLAb/nfv-scenario-blueprint-master.zip >> /tmp/cfy_status.txt 2>&1
 
 # Create Deployments for Stage1
 ######
