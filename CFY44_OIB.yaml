@@ -51,7 +51,7 @@ inputs:
 
   manager_image_id:
     type: string
-    default: { get_secret : labs_manager_testing }
+    default: { get_secret : CFY44ImageID }
 
   manager_flavor_id:
     type: string

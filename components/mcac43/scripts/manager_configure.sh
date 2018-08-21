@@ -18,7 +18,7 @@ env -i cfy install \
     --timeout 1800 \
     -n blueprint.yaml \
     -b "e2e" \
-    "https://github.com/EarthmanT/e2e-deployment/archive/v1.zip" >> /tmp/cfy_status.txt 2>&1 &
+    "https://github.com/Cloudify-PS/e2e-deployment/archive/v1.zip" >> /tmp/cfy_status.txt 2>&1 &
 
 # Add AWS DB Blueprint
 env -i cfy blueprints upload -n aws.yaml \
