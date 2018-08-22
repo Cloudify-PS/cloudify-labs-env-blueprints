@@ -249,7 +249,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: components/CFYManager43/manager_oib_configure.sh
+          implementation: components/CFYManager44/manager_oib_configure.sh
           inputs:
             plugins_repo: { get_input: plugins_repo }
     relationships:
