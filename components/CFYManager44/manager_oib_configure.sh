@@ -77,4 +77,22 @@ sudo -u centos cfy secrets create cfy_user -s admin >> /tmp/cfy_status.txt 2>&1 
 sudo -u centos cfy secrets create cfy_password -s admin >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secrets create cfy_tenant -s default_agent >> /tmp/cfy_status.txt 2>&1 &
 
+
+ctx logger info "Uploading Plugins Bundle"
+sudo -u centos cfy plugins  bundle-upload -p https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/PluginsMD/labs-plugins-bundel.tar.gz >> /tmp/cfy_status.txt 2>&1
+
+cfy plugins  bundle-upload >> /tmp/cfy_status.txt 2>&1
+
+
+ctx logger info "Uploading Openstack Network Blueprint"
+
+sudo -u centos cfy blueprints upload -n simple-blueprint.yaml -b "openstack-example-network"  "https://github.com/cloudify-examples/openstack-example-network/archive/master.zip"  >> /tmp/cfy_status.txt 2>&1
+
+ctx logger info "Creating Openstack Network Deployment"
+sudo -u centos cfy deployments create -b "openstack-example-network"  "openstack-example-network" -i "external_network_name=external_network"  >> /tmp/cfy_status.txt 2>&1
+
+ctx logger info "Installing Openstack Network Deployment"
+sudo -u centos cfy executions start install -d "openstack-example-network"  >> /tmp/cfy_status.txt 2>&1
+
+
 ctx logger info "Script Ends"
