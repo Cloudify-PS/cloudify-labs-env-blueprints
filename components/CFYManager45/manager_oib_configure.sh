@@ -29,6 +29,16 @@ sudo chmod 644 /etc/cloudify/.ssh/cfy-agent-kp.cp
 sudo chown cfyuser:cfyuser -R /etc/cloudify/.ssh
 public_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 
+# add training key
+training_pem=$(ctx download-resource "certs/training_vm/training.pem")
+training_pub=$(ctx download-resource "certs/training_vm/training.rsa.pub")
+sudo mv $training_pub "/etc/cloudify/cfy-training.rsa.pub"
+sudo mv $training_pem "/etc/cloudify/cfy-training.pem"
+sudo chown cfyuser:cfyuser /etc/cloudify/cfy-training*
+sudo chmod 600 /etc/cloudify/cfy-training*
+sudo cat /etc/cloudify/cfy-training.rsa.pub >> /home/centos/.ssh/authorized_keys
+
+
 # Add manager key to authorized_keys for centos user
 sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub >> /home/centos/.ssh/authorized_keys
 

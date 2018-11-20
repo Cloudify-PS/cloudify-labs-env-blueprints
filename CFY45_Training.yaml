@@ -1,0 +1,160 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+  lab_vm_image_id:
+    type: string
+    default: { get_secret : LabVMImageID }
+
+  lab_vm_flavor_id:
+    type: string
+    default: { get_secret : LabVMFlavorID }
+
+imports:
+  - CFY45_OIB.yaml
+
+
+dsl_definitions:
+
+  openstack_config: &openstack_config
+    username: { get_secret: keystone_username }
+    password: { get_secret: keystone_password }
+    tenant_name: { get_secret: keystone_tenant_name }
+    auth_url: { get_secret: keystone_url }
+    region: { get_secret: region }
+
+
+
+node_templates:
+
+
+  lab_vm1:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      openstack_config: *openstack_config
+      management_network_name: { get_property: [ mgmt_network, resource_id ] }
+      server:
+        image: { get_input: lab_vm_image_id }
+        flavor: { get_input: lab_vm_flavor_id }
+      agent_config:
+        install_method: none
+
+    interfaces:
+    relationships:
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+      - target: training_keypair
+        type: cloudify.openstack.server_connected_to_keypair
+      - target: lab_vm1_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+
+
+  lab_vm2:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      openstack_config: *openstack_config
+      management_network_name: { get_property: [ mgmt_network, resource_id ] }
+      server:
+        image: { get_input: lab_vm_image_id }
+        flavor: { get_input: lab_vm_flavor_id }
+      agent_config:
+        install_method: none
+    interfaces:
+    relationships:
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+      - target: training_keypair
+        type: cloudify.openstack.server_connected_to_keypair
+      - target: lab_vm2_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+
+
+
+
+
+  lab_vm1_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      openstack_config: *openstack_config
+      floatingip:
+        floating_network_name: { get_secret: external_network_name }
+
+
+  lab_vm2_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      openstack_config: *openstack_config
+      floatingip:
+        floating_network_name: { get_secret: external_network_name }
+
+  training_keypair:
+    type: cloudify.openstack.nodes.KeyPair
+    properties:
+      private_key_path: { get_secret: training_key_private }
+      use_external_resource: True
+      resource_id: Training
+      openstack_config: *openstack_config
+
+
+outputs:
+
+  integration:
+    value:
+      manager: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+      composer: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/composer" ] }
+      iaas_dash: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+      vpn_file:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
+      ssh_ip:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+      ssh_user: "centos"
+
+  lab_env:
+    description: OpenStack Cloudify Lab
+    value:
+      video: https://www.youtube.com/embed/psJhdw78kkw
+      suspend: false
+
+  lab_ui_outputs:
+    value:
+      - title: 'Cloudify Manager'
+        open: yes
+        items:
+          - name: 'Cloudify Manager Credentials'
+            value: 'username: admin password: admin'
+          - name: 'Cloudify Manager Link'
+            value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+          - name: 'CLI command'
+            value: { concat: ["cfy profiles use " , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
+          - name: 'IP Address'
+            value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+
+      - title: 'Virtual Machines for Training'
+        open: no
+        items:
+          - name: 'Training VM 1 IP Address'
+            value: { get_attribute: [ lab_vm1_ip, floating_ip_address ] }
+          - name: 'Training VM 2 IP Address'
+            value: { get_attribute: [ lab_vm2_ip, floating_ip_address ] }
+          - name: 'Training VMs Private Key'
+            value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa'
+          - name: 'Training VMs Publick Key'
+            value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa.pub'
+
+
+
+
+      - title: 'VPN Configuration'
+        open: no
+        items:
+          - name: 'OpenVpn Configuration File'
+            value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
+          - name: 'VPN Portal'
+            value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+          - name: 'VPN Configuration Guide'
+            value: 'https://cloudify.co/knowledge-base/cloudify-labs-vpn-configuration-guide/'
+
+      - title: 'Lab OpenStack IaaS'
+        open: no
+        items:
+          - name: 'OpenStack Dashboard Credentials'
+            value: 'username: admin password: cloudify1234'
+          - name: 'OpenStack Dashboard'
+            value:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
