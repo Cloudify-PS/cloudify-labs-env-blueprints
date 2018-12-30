@@ -129,9 +129,9 @@ outputs:
       - title: 'Virtual Machines for Training'
         open: no
         items:
-          - name: 'Training VM 1 IP Address'
+          - name: 'Training CLI VM Adresss'
             value: { get_attribute: [ lab_vm1_ip, floating_ip_address ] }
-          - name: 'Training VM 2 IP Address'
+          - name: 'Training APP VM IP Address'
             value: { get_attribute: [ lab_vm2_ip, floating_ip_address ] }
           - name: 'Training VMs Private Key'
             value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa'
