@@ -21,7 +21,7 @@ sudo -u centos  cfy install \
     --timeout 1800 \
     -n blueprint.yaml \
     -b "e2e" \
-    "https://github.com/Cloudify-PS/e2e-deployment/archive/v6.zip" >> /tmp/cfy_status.txt 2>&1 &
+    "https://github.com/Cloudify-PS/e2e-deployment/archive/v7.zip" >> /tmp/cfy_status.txt 2>&1 &
 
 # Add AWS DB Blueprint
 sudo -u centos  cfy blueprints upload -n aws.yaml \
