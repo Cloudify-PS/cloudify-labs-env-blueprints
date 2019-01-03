@@ -75,7 +75,7 @@ sudo -u centos cfy secret create kubernetes-admin_client_certificate_data -s X >
 
 sudo -u centos cfy secrets create cfy_user -s admin >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secrets create cfy_password -s admin >> /tmp/cfy_status.txt 2>&1 &
-sudo -u centos cfy secrets create cfy_tenant -s default_agent >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secrets create cfy_tenant -s default_tenant >> /tmp/cfy_status.txt 2>&1 &
 
 
 ctx logger info "Uploading Plugins Bundle"
