@@ -51,7 +51,7 @@ inputs:
 
   manager_image_id:
     type: string
-    default: '7e584387-a5c7-4b15-a227-1bb5dcf7fc49'
+    default: { get_secret : CFY45ImageID }
 
   manager_flavor_id:
     type: string
@@ -176,7 +176,7 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       volume:
-        size: 80
+        size: 40
         imageRef: { get_input: manager_image_id }
         volume_type: { get_input: oib_volume_type }
       boot: true
@@ -249,7 +249,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: components/CFYManager4x/manager_oib_configure.sh
+          implementation: components/CFYManager45/manager_oib_configure.sh
           inputs:
             plugins_repo: { get_input: plugins_repo }
     relationships:
@@ -289,7 +289,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
-          implementation:  components/CFYManager4x/scripts/add_external_network.sh
+          implementation:  components/CFYManager43/scripts/add_external_network.sh
           inputs:
             public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
             private_ip: { get_attribute: [ cfy_manager , ip] }
