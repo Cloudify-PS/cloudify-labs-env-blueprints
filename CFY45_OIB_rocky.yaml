@@ -1,0 +1,337 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/4.5/types.yaml
+  - plugin:cloudify-openstack-plugin
+  - plugin:cloudify-diamond-plugin
+  - plugin:cloudify-utilities-plugin
+  - types/oib_openstack.yaml
+  - components/ovs/types.yaml
+  - components/CentOS7/types.yaml
+  - components/HubSpot/types.yaml
+
+inputs:
+
+  customer_token:
+    type: string
+    default: "AA"
+
+  plugins_repo:
+    type: string
+    default: "https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Plugins/"
+
+
+  customer_name:
+    type: string
+    default: 'MrCustomer'
+
+  customer_email:
+    type: string
+    default: test@cloudify.co
+
+  hubspot_portal:
+    type: string
+    default: "1918719"
+
+  hubspot_form:
+    type: string
+    default: 74f1a2ca-923d-4eae-aa9e-e0b810788d56
+
+  oib_volume_type:
+    type: string
+    default: 'HighPerformance'
+
+  oib_image_id:
+    type: string
+    default: 'f5a979ad-6ad2-4be4-b241-a92854032b4b' # OIB-rocky-v1
+
+  oib_flavor_id:
+    type: string
+    default: 'f7cfaaa8-e2db-4f9b-a65b-6a407f340960' # 8CPU 16GBRAM
+
+  manager_image_id:
+    type: string
+    default: { get_secret : CFY45ImageID }
+
+  manager_flavor_id:
+    type: string
+    default: '38ae7f93-4a27-4511-be01-f81b82f65d95' # 6CPU 8GBRAM 40GB
+
+  agent_user:
+    type: string
+    default: 'centos'
+
+  lab_security_group_name:
+    type: string
+    default: 'lab_sg'
+
+  mgmt_network:
+    type: string
+    default: { get_secret : private_network_name }
+
+  use_analytics:
+    type: integer
+    default: 1
+
+  use_guides:
+    type: integer
+    default: 1
+
+
+dsl_definitions:
+
+  openstack_config: &openstack_config
+    username: { get_secret: keystone_username }
+    password: { get_secret: keystone_password }
+    tenant_name: { get_secret: keystone_tenant_name }
+    auth_url: { get_secret: keystone_url }
+    region: { get_secret: region }
+
+
+node_templates:
+
+##
+## Hub spot integration
+##################
+
+  hs_registration:
+    type: hubspot.form.Submit
+    properties:
+      portal_id: { get_input: hubspot_portal }
+      form_guid: { get_input: hubspot_form }
+      params:
+              FirstName:  { get_input: customer_name }
+              LastName: " "
+              Email: { get_input: customer_email }
+
+
+##
+## Servers
+##################
+
+  oib_server:
+    type: oib.nodes.MonitoredServer
+    properties:
+      openstack_config: *openstack_config
+      management_network_name: { get_property: [ mgmt_network, resource_id ] }
+      server:
+        image: { get_input: oib_image_id }
+        flavor: { get_input: oib_flavor_id }
+      cloudify_agent:
+        user: { get_input: agent_user }
+    relationships:
+      - target: lab_floating_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+      - target: lab_volume
+        type: cloudify.relationships.connected_to
+      - target: lab_keypair
+        type: cloudify.openstack.server_connected_to_keypair
+
+  cfy_manager:
+    type: oib.nodes.MonitoredServer
+    properties:
+      openstack_config: *openstack_config
+      management_network_name: { get_property: [ mgmt_network, resource_id ] }
+      server:
+        image: { get_input: manager_image_id }
+        flavor: { get_input: manager_flavor_id }
+      cloudify_agent:
+        user: { get_input: agent_user }
+    interfaces:
+    relationships:
+      - target: lab_security_group
+        type: cloudify.openstack.server_connected_to_security_group
+      - target: lab_keypair
+        type: cloudify.openstack.server_connected_to_keypair
+      - target: manager_volume
+        type: cloudify.relationships.connected_to
+
+##
+## Infra
+##################
+
+  lab_keypair:
+    type: cloudify.openstack.nodes.KeyPair
+    properties:
+      private_key_path: { get_secret: agent_key_private }
+      use_external_resource: True
+      resource_id: lab_keypair
+      openstack_config: *openstack_config
+
+
+  lab_volume:
+    type: cloudify.openstack.nodes.Volume
+    properties:
+      openstack_config: *openstack_config
+      volume:
+        size: 80
+        imageRef: { get_input: oib_image_id }
+        volume_type: { get_input: oib_volume_type }
+      boot: true
+
+  manager_volume:
+    type: cloudify.openstack.nodes.Volume
+    properties:
+      openstack_config: *openstack_config
+      volume:
+        size: 40
+        imageRef: { get_input: manager_image_id }
+        volume_type: { get_input: oib_volume_type }
+      boot: true
+
+
+
+  lab_floating_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      openstack_config: *openstack_config
+      floatingip:
+        floating_network_name: { get_secret: external_network_name }
+
+  lab_security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      openstack_config: *openstack_config
+      use_external_resource: True
+      resource_id: { get_input: lab_security_group_name }
+
+  mgmt_network:
+    type: cloudify.openstack.nodes.Network
+    properties:
+      openstack_config: *openstack_config
+      use_external_resource: true
+      resource_id: { get_input : mgmt_network }
+
+##
+## SDN
+################
+
+  sdn_sw_manager:
+    type:   ovs.nodes.centos_vswitch
+    properties:
+      ipaddr: 10.10.25.15
+      netmask: 255.255.255.0
+    relationships:
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+      - target: sdn_sw_oib_server
+        type: ovs.relationships.vswitch_gre
+
+  sdn_sw_oib_server:
+    type:  ovs.nodes.centos_vswitch
+    properties:
+      use_external_resource: True
+      resource_id: br-mng
+    relationships:
+      - target: oib_server
+        type: cloudify.relationships.contained_in
+
+##
+##  Content Related
+##############################
+
+  vpn:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: components/VPN/vpn_configure.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+    relationships:
+      - target: oib_server
+        type: cloudify.relationships.contained_in
+
+  oib_cloudify_config:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: components/CFYManager45/manager_oib_rocky_configure.sh
+          inputs:
+            plugins_repo: { get_input: plugins_repo }
+    relationships:
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+      - target: external_network
+        type: cloudify.relationships.depends_on
+      - target: sdn_sw_manager
+        type: cloudify.relationships.depends_on
+
+  rproxy:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation:  components/rproxy/proxy_install-sdn.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+            use_sudo: true
+        start:
+          implementation: components/rproxy/proxy_start.sh
+
+    relationships:
+      - target: oib_server
+        type: cloudify.relationships.contained_in
+
+  remote_access:
+    type: CentOS.ssh.RemotePortForward
+    relationships:
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+      - target: sdn_sw_manager
+        type: cloudify.relationships.depends_on
+
+  external_network:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation:  components/CFYManager43/scripts/add_external_network.sh
+          inputs:
+            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+            private_ip: { get_attribute: [ cfy_manager , ip] }
+            use_sudo: true
+    relationships:
+      - target: remote_access
+        type: cloudify.relationships.depends_on
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+
+
+
+  analytics:
+    type: cloudify.nodes.ApplicationModule
+    capabilities:
+      scalable:
+        properties:
+          default_instances: { get_input: use_analytics }
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: components/CFYManager4x/install_analytics.sh
+    relationships:
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on
+
+  guides:
+    type: cloudify.nodes.ApplicationModule
+    capabilities:
+      scalable:
+        properties:
+          default_instances: { get_input: use_guides }
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: components/CFYManager4x/install_guides.sh
+          inputs:
+            use_sudo: true
+    relationships:
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on

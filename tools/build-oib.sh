@@ -98,7 +98,7 @@ IPADDR=10.10.25.1
 NETMASK=255.255.255.0
 GATEWAY=10.10.25.1
 DNS1=10.10.25.1
-MTU=1500
+MTU=1470
 ONBOOT=yes
 EOB
 
@@ -116,11 +116,20 @@ packstack --allinone --provision-demo=n --os-neutron-ovs-bridge-mappings=extnet:
 # Fix here IP addresses
 sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
 sed -i -e "s/CONFIG_CINDER_VOLUMES_SIZE=.*/CONFIG_CINDER_VOLUMES_SIZE=$CONFIG_CINDER_VOLUMES_SIZE/g" answers.txt
-#Change to tcp due ssh prevent to inject ssh key to new instance
+cat ~/.ssh/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
+# Temporary all SSH root login
+sudo sed -i -e "s/#PermitRootLogin yes/PermitRootLogin yes/g" /etc/ssh/sshd_config
+sudo systemctl restart sshd
+#Change to tcp due ssh prevent injecting ssh key to new instance
 sed -i -e "s/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=ssh/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp/g" answers.txt
 packstack --answer-file=answers.txt
-sudo yum install -y openstack-utils
+sudo yum install -y openstack-utils openstack-selinux
 
+#Disable SSH root login
+sudo sed -i -e "s/#PermitRootLogin yes/PermitRootLogin no/g" /etc/ssh/sshd_config
+sudo systemctl restart sshd
+
+# Restore network interfaces.
 cat << EOB | sudo tee /etc/sysconfig/network-scripts/ifcfg-br-ex
 DEVICE=br-ex
 DEVICETYPE=ovs
@@ -156,7 +165,7 @@ IPADDR=10.10.25.1
 NETMASK=255.255.255.0
 GATEWAY=10.10.25.1
 DNS1=10.10.25.1
-MTU=1500
+MTU=1470
 ONBOOT=yes
 EOB
 
@@ -203,9 +212,12 @@ sudo systemctl restart libvirt-guests
 
 
 # update iptables
+modprobe nf_conntrack_proto_gre
 sudo iptables -I INPUT -p tcp -m multiport --dports 6082 -m comment --comment "Allow SPICE connections for console access " -j ACCEPT
+sudo iptables -I INPUT -p 47 -j ACCEPT
 sudo iptables -I INPUT -i tun+ -j ACCEPT
 sudo iptables -I INPUT -p udp --dport 1194 -j ACCEPT
+sudo iptables -I FORWARD -p 47 -j ACCEPT
 sudo iptables -I FORWARD -i tun+ -j ACCEPT
 sudo iptables -I FORWARD -o tun+ -j ACCEPT
 sudo iptables -I FORWARD -s 172.25.1.0/24 -j ACCEPT
@@ -241,7 +253,7 @@ cat << EOB | sudo tee /etc/tuned/no-thp/script.sh
 
 . /usr/lib/tuned/functions
 
-start() { 
+start() {
  echo never > /sys/kernel/mm/transparent_hugepage/defrag
  return 0
 }
@@ -279,20 +291,41 @@ sudo systemctl daemon-reload
 
 
 # Create openstack external router and network
+EXTERNAL_NETWORK="external_network"
 source keystonerc_admin
-neutron net-create external --provider:network_type flat --provider:physical_network extnet --router:external --share
-neutron subnet-create --name ext_sub --enable_dhcp=False --allocation-pool=start=172.25.1.10,end=172.25.1.250 --gateway=172.25.1.1 external 172.25.1.0/24
+neutron net-create $EXTERNAL_NETWORK --provider:network_type flat --provider:physical_network extnet --router:external --share
+neutron subnet-create --name ext_sub --enable_dhcp=False --allocation-pool=start=172.25.1.10,end=172.25.1.250 --gateway=172.25.1.1 $EXTERNAL_NETWORK 172.25.1.0/24
 
 openstack router create router
-openstack router set router --external-gateway external
+openstack router set router --external-gateway $EXTERNAL_NETWORK
 
-#neutron net-create private
-#neutron subnet-create private 10.141.33.0/24 --name private_subnet --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4
+# create private_network
+neutron net-create private_network
+neutron subnet-create --name private_subnet --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4 private_network 192.168.113.0/24
+neutron router-interface-add router private_subnet
 
-#neutron router-interface-add router private_subnet
+# create provided network and subnet
+neutron net-create provider --provider:network_type flat --provider:physical_network provider
+neutron subnet-create provider 10.10.25.0/24 --name ProviderSubnet --enable-dhcp --allocation-pool start=10.10.25.100,end=10.10.25.150 --dns-nameserver 8.8.8.8 --ip-version 4 --gateway 10.10.25.253
+
+# create openstack images
+echo "Uploading CentOS 7.6 ..."
+curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1809.qcow2 -o /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2
+openstack image create --disk-format qcow2 --id aee5438f-1c7c-497f-a11e-53360241cf0f --file /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2 CentOS7
+rm -f /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2
+
+echo "Uploading Ubuntu ..."
+curl https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img -o /tmp/bionic-server-cloudimg-amd64.img
+openstack image create --disk-format raw --id 05bb3a46-ca32-4032-bedd-8d7ebd5c8100 --file /tmp/bionic-server-cloudimg-amd64.img Ubuntu
+rm -f /tmp/bionic-server-cloudimg-amd64.img
+
+echo "Uploading cirros ..."
+curl http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img -o /tmp/cirros-0.4.0-x86_64-disk.img
+openstack image create --disk-format raw --id a95c112f-a1ab-40b4-a3cc-7604485a43d2 --file /tmp/cirros-0.4.0-x86_64-disk.img cirros
+rm -f /tmp/cirros-0.4.0-x86_64-disk.img
+
 
 # Change admin password
-
 openstack user password set --password $PASSWORD --original-password $OS_PASSWORD
 sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" keystonerc_admin
 sudo sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" /root/keystonerc_admin
