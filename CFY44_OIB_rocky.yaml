@@ -43,7 +43,8 @@ inputs:
 
   oib_image_id:
     type: string
-    default: 'e1d57351-1b61-4fba-b8d2-1a00b11b819b' # OIB-rocky-v1.0.1
+
+    default: { get_secret : OIB_Rocky_ImageID }  # OIB-rocky-v1.1
 
   oib_flavor_id:
     type: string
