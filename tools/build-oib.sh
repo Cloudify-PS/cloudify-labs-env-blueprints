@@ -589,7 +589,19 @@ EOB
 sudo systemctl start openvpn@server
 sudo systemctl enable openvpn@server
 
-# clean SSH public keys
+# clean SSH public keys of centos and root
 sudo rm -f /root/.ssh/authorized_keys
 rm -f ~/.ssh/authorized_keys
+
+#create user cloudify and set authorithed keys
+# Cloudify user uses to set CM port forwarding via OIB
+
+sudo adduser cloudify
+sudo usermod -aG wheel cloudify
+sudo mkdir /home/cloudify/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmyVtf2Wq0vIurX60IMtULqHdMzCXGZqfCW8ACp+Kh1JVHLIwf5tEf/1nxqSCpyBUbCKkmbxB8fpcqbG0OA1+fHAzu1gbCOGpLpDDJ6HcSHUVTAUYhGlQBHtHWZ3lahrpmPuOauy6mAso9oJfQfq/sbLn5sDw8mVv8rqkeS62a/6pU6gvfILvhMUElhoEpLuegMVaCU8K1Jlzfy4AXPyaSA9KafVZDxj9hIPbqB5ErG+YXKT/og5WK3L/2v4ouYVhcB8cXjgmcxFXIlHPOct2zOcAdxlE4Pk5b8RPEteDO+BXFfI2+/IPkkpKvKENFggvvRkzH+MYO5venEm3o8/Dn oib-key" | sudo tee -a /home/cloudify/.ssh/authorized_keys
+sudo chmod 700 /home/cloudify/.ssh
+sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
+sudo chown -R cloudify:cloudify /home/cloudify/.ssh
+
 history -c
