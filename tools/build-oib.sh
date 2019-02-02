@@ -119,6 +119,8 @@ sed -i -e "s/CONFIG_CINDER_VOLUMES_SIZE=.*/CONFIG_CINDER_VOLUMES_SIZE=$CONFIG_CI
 cat ~/.ssh/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
 # Temporary all SSH root login
 sudo sed -i -e "s/#PermitRootLogin yes/PermitRootLogin yes/g" /etc/ssh/sshd_config
+sudo sed -i -e "s/#GatewayPorts no/GatewayPorts yes/g" /etc/ssh/sshd_config
+sudo sed -i -e "s/#GatewayPorts yes/GatewayPorts yes/g" /etc/ssh/sshd_config
 sudo systemctl restart sshd
 #Change to tcp due ssh prevent injecting ssh key to new instance
 sed -i -e "s/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=ssh/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp/g" answers.txt
@@ -126,7 +128,7 @@ packstack --answer-file=answers.txt
 sudo yum install -y openstack-utils openstack-selinux
 
 #Disable SSH root login
-sudo sed -i -e "s/#PermitRootLogin yes/PermitRootLogin no/g" /etc/ssh/sshd_config
+sudo sed -i -e "s/PermitRootLogin yes/PermitRootLogin no/g" /etc/ssh/sshd_config
 sudo systemctl restart sshd
 
 # Restore network interfaces.
@@ -213,10 +215,12 @@ sudo systemctl restart libvirt-guests
 
 # update iptables
 modprobe nf_conntrack_proto_gre
+sudo iptables -I INPUT -p tcp -m multiport --dports 2222,53333,5671,53229 -m comment --comment "CM manager ports" -j ACCEPT
 sudo iptables -I INPUT -p tcp -m multiport --dports 6082 -m comment --comment "Allow SPICE connections for console access " -j ACCEPT
 sudo iptables -I INPUT -p 47 -j ACCEPT
 sudo iptables -I INPUT -i tun+ -j ACCEPT
 sudo iptables -I INPUT -p udp --dport 1194 -j ACCEPT
+sudo iptables -I FORWARD -p tcp -m multiport --dports 2222,53333,5671,53229 -m comment --comment "CM manager ports" -j ACCEPT
 sudo iptables -I FORWARD -p 47 -j ACCEPT
 sudo iptables -I FORWARD -i tun+ -j ACCEPT
 sudo iptables -I FORWARD -o tun+ -j ACCEPT
@@ -605,3 +609,4 @@ sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
 sudo chown -R cloudify:cloudify /home/cloudify/.ssh
 
 history -c
+sudo poweroff
