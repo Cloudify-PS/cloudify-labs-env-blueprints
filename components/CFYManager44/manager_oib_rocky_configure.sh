@@ -2,9 +2,6 @@
 
 REPO=$plugins_repo
 
-
-
-
 # install build
 ctx logger info "Installing packages"
 sudo yum -y install gcc python-devel wget
@@ -19,7 +16,6 @@ sudo /bin/bash -c "echo '172.25.1.0/24 via 10.10.25.253 dev br-ovs' >> /etc/sysc
 sudo systemctl restart cloudify-stage
 sudo systemctl restart cloudify-restservice
 
-
 # generate Key
 ctx logger info "Generating Keys"
 sudo mkdir -p /etc/cloudify/.ssh/
@@ -33,7 +29,6 @@ public_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub >> /home/centos/.ssh/authorized_keys
 
 sudo -u centos cfy status >> /tmp/cfy_status.txt 2>&1 &
-
 
 # create secrets
 ctx logger info "Creating Secrests"
