@@ -16,8 +16,8 @@ node_templates:
         type: cloudify.relationships.contained_in
       - target: oib_cloudify_config
         type: cloudify.relationships.depends_on
-      - target: guides
-        type: cloudify.relationships.depends_on
+#      - target: guides
+#        type: cloudify.relationships.depends_on
       - target: analytics
         type: cloudify.relationships.depends_on
       - target: external_network

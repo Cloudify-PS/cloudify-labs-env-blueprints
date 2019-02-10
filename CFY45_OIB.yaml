@@ -323,20 +323,20 @@ node_templates:
       - target: oib_cloudify_config
         type: cloudify.relationships.depends_on
 
-  guides:
-    type: cloudify.nodes.ApplicationModule
-    capabilities:
-      scalable:
-        properties:
-          default_instances: { get_input: use_guides }
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        configure:
-          implementation: components/CFYManager4x/install_guides.sh
-          inputs:
-            use_sudo: true
-    relationships:
-      - target: cfy_manager
-        type: cloudify.relationships.contained_in
-      - target: oib_cloudify_config
-        type: cloudify.relationships.depends_on
+#  guides:
+#    type: cloudify.nodes.ApplicationModule
+#    capabilities:
+#      scalable:
+#        properties:
+#          default_instances: { get_input: use_guides }
+#    interfaces:
+#      cloudify.interfaces.lifecycle:
+#        configure:
+#          implementation: components/CFYManager4x/install_guides.sh
+#          inputs:
+#            use_sudo: true
+#    relationships:
+#      - target: cfy_manager
+#        type: cloudify.relationships.contained_in
+#      - target: oib_cloudify_config
+#        type: cloudify.relationships.depends_on
