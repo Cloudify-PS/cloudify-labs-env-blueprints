@@ -1,10 +1,15 @@
 tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
-  - http://www.getcloudify.org/spec/cloudify/4.2/types.yaml
-  - http://www.getcloudify.org/spec/openstack-plugin/2.4.1/plugin.yaml
-  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-diamond-plugin/1.3.5/plugin.yaml
-  - https://github.com/cloudify-incubator/cloudify-utilities-plugin/releases/download/1.9.0/plugin.yaml
+#  - http://www.getcloudify.org/spec/cloudify/4.2/types.yaml
+#  - http://www.getcloudify.org/spec/openstack-plugin/2.4.1/plugin.yaml
+#  - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-diamond-plugin/1.3.5/plugin.yaml
+#  - https://github.com/cloudify-incubator/cloudify-utilities-plugin/releases/download/1.9.0/plugin.yaml
+
+  - http://www.getcloudify.org/spec/cloudify/4.5/types.yaml
+  - plugin:cloudify-openstack-plugin
+  - plugin:cloudify-diamond-plugin
+  - plugin:cloudify-utilities-plugin
   - types/oib_openstack.yaml
   - components/ovs/types.yaml
   - components/CentOS7/types.yaml
