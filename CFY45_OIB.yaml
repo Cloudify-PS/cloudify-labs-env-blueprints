@@ -43,7 +43,7 @@ inputs:
 
   oib_image_id:
     type: string
-    default: '0c15078c-1cb1-49fd-a344-3e41a71033da'
+    default: { get_secret : OIB_Kilo_ImageID }
 
   oib_flavor_id:
     type: string
