@@ -1,23 +1,23 @@
 tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
-  - CFY45_OIB.yaml
+  - CFY45_OIB_rocky.yaml
 
 node_templates:
 
-  oib_mcac_config:
+  oib_nfv_config:
     type: cloudify.nodes.ApplicationModule
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: components/mcac45/scripts/manager_configure.sh
+          implementation: components/nfv45/scripts/manager_configure.sh
     relationships:
       - target: cfy_manager
         type: cloudify.relationships.contained_in
       - target: oib_cloudify_config
         type: cloudify.relationships.depends_on
-#      - target: guides
-#        type: cloudify.relationships.depends_on
+      - target: guides
+        type: cloudify.relationships.depends_on
       - target: analytics
         type: cloudify.relationships.depends_on
       - target: external_network
@@ -44,11 +44,11 @@ outputs:
   lab_ui_outputs:
     value:
 
-      - title: 'Lab Documentation'
+      - title: 'Cloudify VNF Lab Guide'
         open: yes
         items:
-          - name: 'Multi-Cloud with Governance Lab Guide'
-            value: 'https://cloudify.co/knowledge-base/multi-cloud-governance-solution/'
+          - name: 'Guide'
+            value: 'https://cloudify.co/knowledge-base/vnf-onboarding-lab-scenario'
 
       - title: 'Cloudify Manager'
         open: yes
@@ -68,8 +68,8 @@ outputs:
             value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
           - name: 'VPN Portal'
             value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
-          - name: 'VPN Guide'
-            value: 'https://cloudify.co/wp-content/uploads/2018/02/VPN-Guide.pdf'
+          - name: 'VPN Configuration Guide'
+            value: 'https://cloudify.co/knowledge-base/cloudify-labs-vpn-configuration-guide/'
 
       - title: 'Lab OpenStack IaaS'
         open: no
