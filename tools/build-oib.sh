@@ -300,17 +300,18 @@ source keystonerc_admin
 neutron net-create $EXTERNAL_NETWORK --provider:network_type flat --provider:physical_network extnet --router:external --share
 neutron subnet-create --name ext_sub --enable_dhcp=False --allocation-pool=start=172.25.1.10,end=172.25.1.250 --gateway=172.25.1.1 $EXTERNAL_NETWORK 172.25.1.0/24
 
-openstack router create router
-openstack router set router --external-gateway $EXTERNAL_NETWORK
+openstack router create router1
+openstack router set router1 --external-gateway $EXTERNAL_NETWORK
 
 # create private_network
 neutron net-create private_network
 neutron subnet-create --name private_subnet --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4 private_network 192.168.113.0/24
-neutron router-interface-add router private_subnet
+neutron router-interface-add router1 private_subnet
 
-# create provided network and subnet
+# create provider network and subnet
 neutron net-create provider --provider:network_type flat --provider:physical_network provider
-neutron subnet-create provider 10.10.25.0/24 --name ProviderSubnet --enable-dhcp --allocation-pool start=10.10.25.100,end=10.10.25.150 --dns-nameserver 8.8.8.8 --ip-version 4 --gateway 10.10.25.253
+neutron subnet-create provider 10.10.25.0/24 --name provider_subnet --enable-dhcp --allocation-pool start=10.10.25.100,end=10.10.25.200 --dns-nameserver 8.8.8.8 --ip-version 4 --gateway 10.10.25.253
+neutron router-interface-add router1 provider_subnet
 
 # create openstack images
 echo "Uploading CentOS 7.6 ..."
