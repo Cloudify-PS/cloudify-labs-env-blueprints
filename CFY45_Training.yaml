@@ -158,98 +158,98 @@ outputs:
             value: 'username: admin password: cloudify1234'
           - name: 'OpenStack Dashboard'
             value:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
-     - title: 'Secterts Values for new tenant'
-       open: no
-       items:
-         - name: 'Secret'
-           value: 'Value'
-         - name: 'ubuntu_trusty_image'
-           value: '05bb3a46-ca32-4032-bedd-8d7ebd5c8100'
-         - name: 'centos_core_image'
-           value: 'aee5438f-1c7c-497f-a11e-53360241cf0f'
-         - name: 'small_image_flavor'
-           value: '4d798e17-3439-42e1-ad22-fb956ec22b54'
-         - name: 'medium_image_flavor'
-           value: '3'
-         - name: 'large_image_flavor'
-           value: '62ed898b-0871-481a-9bb4-ac5f81263b33'
+      - title: 'Secterts Values for new tenant'
+        open: no
+        items:
+          - name: 'Secret'
+            value: 'Value'
+          - name: 'ubuntu_trusty_image'
+            value: '05bb3a46-ca32-4032-bedd-8d7ebd5c8100'
+          - name: 'centos_core_image'
+            value: 'aee5438f-1c7c-497f-a11e-53360241cf0f'
+          - name: 'small_image_flavor'
+            value: '4d798e17-3439-42e1-ad22-fb956ec22b54'
+          - name: 'medium_image_flavor'
+            value: '3'
+          - name: 'large_image_flavor'
+            value: '62ed898b-0871-481a-9bb4-ac5f81263b33'
 
-         - name: 'keystone_username'
-           value: 'admin'
-         - name: 'keystone_password'
-           value: 'cloudify1234'
-         - name: 'keystone_tenant_name'
-           value: 'admin'
-         - name: 'keystone_url'
-           value: 'http://10.10.25.1:5000/v2.0'
-         - name: 'region'
-           value: 'RegionOne'
-         - name: 'keystone_region'
-           value: 'RegionOne'
+          - name: 'keystone_username'
+            value: 'admin'
+          - name: 'keystone_password'
+            value: 'cloudify1234'
+          - name: 'keystone_tenant_name'
+            value: 'admin'
+          - name: 'keystone_url'
+            value: 'http://10.10.25.1:5000/v2.0'
+          - name: 'region'
+            value: 'RegionOne'
+          - name: 'keystone_region'
+            value: 'RegionOne'
 
-         - name: 'agent_key_private'
-           value: |
-             -----BEGIN RSA PRIVATE KEY-----
-             MIIEpAIBAAKCAQEAwICU2G3ygvmnZLWbt3rSkko8OqcUajla0rlO4yevrLBSy37W
-             8YuWCS/CE5ZZnwoWZ6iXnBogRaLW86+VnpBl/ETqkh09affOG19ISUY67MTy4q51
-             /26mBqELnbHtxfw+m1JZLrAP7eGRRYm5DhYg6dJMKTmvwoeLEAKomGnKjtvygSkX
-             +a+sU4HUMlLfRp0O4mQjs+aGpMvPPc9+yY8tSdxIgHo/LEcSqPuG+azZHvmKMwqa
-             Bf3OyDkaYILlVubASOWn+430ScFqU6uFKBooiB3OO6iVW5ezzyVH1bceJrMIkty4
-             n4GH/zfv6IVqX/xESrKdEkSA7kvLQCL0xZKGGwIDAQABAoIBABhMIn1u4z1E5awA
-             gDcYeZudYxzEGf+OXbhbS2nAiJvzZX/p8pdqVvWx4X03bPh1/X33+arqYUho1VjM
-             wMXS1AyTZkgrCKVnccxiqm0VQDrCYSXbf2lOPgZ4LU8qNijXPc+9BSSvdFNCNWPh
-             jkoI4P6iXJqXfWfAU/0hWMZkE/0T7e2PEuFCYllhNejUTDwqCWUqu7XOC7kIwHDW
-             mW0mj64iim0UKjFr5ez0qN/9orNMZLtNrtNcDDn94dHABPNzbPC95L1gkNgtECa2
-             91BKqeFrUFGSk2tqV1CLXdSleQ7xQtSYZHNeTr7Bznbg27iVJq391R4JeFQI0tW/
-             JZFAqYECgYEA3yD1zWR5J94V99jiTWdCtz5FtnNLBVpaGKO+952tfy7v/7Cl8Dr+
-             1Cy74zrzuzM6t/6IYAkUzv6gMHsDE0nF8A82dZLrk89eecWsebs05KmWGAx0dq4b
-             qSkuY/wFVbJTJurrw4U7HWXLqv3ZZIQ5LAdTjGDv4IXb7cwvtMQ/e6UCgYEA3NyU
-             VHnQ5aRaDouhbzJYr09RZsxv4h+4uUaouJJhh9UJO/MHlJZ6hgKbEImJ/jOSgMKL
-             0PsWkS3Nh92FD1giSWlhSVUonxfp3KGVI/V/79ACdWoJ4FlgOlelPPrEq5kxR/lL
-             yajMC55bhQTvx6u0Qz7GdVbCWymD9EZVcAYVTr8CgYAdTpb6g1fmhKUeCL6wq/93
-             UhaWAE66RUPQOLG8lFlVezTKwMkK5LTT6YxELFoXHIN551TCSG8TQR6JP58HyYjW
-             HyloCAQpRfOCyxP8aTppTl0Ii5pAfF3luiL9vvx0ZRfG5NRSug0pr1UxAGatbTCV
-             N+EhbxoSw4I/mbIqbBxqgQKBgQDCLKO0CU0hOHd8pkIN0wOpTWDRshcDhMQREBAy
-             BW/9zcxKioY1mn6p5wyRY3qQpKK+1Uu7NaVHii9SrezX6rJqPF2t7VLDXHDc6qqG
-             bMZH/mbK96krNyik4n2BuS7DdvGex4xcBS0vYdAwiICO2WSoYj501wwUvdEnJ9bh
-             oFeHXQKBgQCNTVBxq8i+sgEHh2DE/jlpheUZb+OLQijpwlF1gcw0NRFZc+d5f+wE
-             UOSeEIG/dj6Vfx7M+vsaQALuewCf6iuXP024v/KDKSUFY4Sl6I+xwmArVRXAbo/w
-             4mPRaehCM2qoHUE7GPiFCJqQ1t49Mg/+7qYyasdBd2GvMzc+RykfWA==
-             -----END RSA PRIVATE KEY-----
-
-
-         - name: 'agent_key_public'
-           value: |
-             ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAgJTYbfKC+adktZu3etKSSjw6pxRqOVrSuU7jJ6+ssFLLftbxi5YJL8ITllmfChZnqJecGiBFotbzr5WekGX8ROqSHT1p984bX0hJRjrsxPLirnX/bqYGoQudse3F/D6bUlkusA/t4ZFFibkOFiDp0kwpOa/Ch4sQAqiYacqO2/KBKRf5r6xTgdQyUt9GnQ7iZCOz5oaky889z37Jjy1J3EiAej8sRxKo+4b5rNke+YozCpoF/c7IORpgguVW5sBI5af7jfRJwWpTq4UoGiiIHc47qJVbl7PPJUfVtx4mswiS3LifgYf/N+/ohWpf/ERKsp0SRIDuS8tAIvTFkoYb michaels@LAPTOP-UK8AE0VF
+          - name: 'agent_key_private'
+            value: |
+              -----BEGIN RSA PRIVATE KEY-----
+              MIIEpAIBAAKCAQEAwICU2G3ygvmnZLWbt3rSkko8OqcUajla0rlO4yevrLBSy37W
+              8YuWCS/CE5ZZnwoWZ6iXnBogRaLW86+VnpBl/ETqkh09affOG19ISUY67MTy4q51
+              /26mBqELnbHtxfw+m1JZLrAP7eGRRYm5DhYg6dJMKTmvwoeLEAKomGnKjtvygSkX
+              +a+sU4HUMlLfRp0O4mQjs+aGpMvPPc9+yY8tSdxIgHo/LEcSqPuG+azZHvmKMwqa
+              Bf3OyDkaYILlVubASOWn+430ScFqU6uFKBooiB3OO6iVW5ezzyVH1bceJrMIkty4
+              n4GH/zfv6IVqX/xESrKdEkSA7kvLQCL0xZKGGwIDAQABAoIBABhMIn1u4z1E5awA
+              gDcYeZudYxzEGf+OXbhbS2nAiJvzZX/p8pdqVvWx4X03bPh1/X33+arqYUho1VjM
+              wMXS1AyTZkgrCKVnccxiqm0VQDrCYSXbf2lOPgZ4LU8qNijXPc+9BSSvdFNCNWPh
+              jkoI4P6iXJqXfWfAU/0hWMZkE/0T7e2PEuFCYllhNejUTDwqCWUqu7XOC7kIwHDW
+              mW0mj64iim0UKjFr5ez0qN/9orNMZLtNrtNcDDn94dHABPNzbPC95L1gkNgtECa2
+              91BKqeFrUFGSk2tqV1CLXdSleQ7xQtSYZHNeTr7Bznbg27iVJq391R4JeFQI0tW/
+              JZFAqYECgYEA3yD1zWR5J94V99jiTWdCtz5FtnNLBVpaGKO+952tfy7v/7Cl8Dr+
+              1Cy74zrzuzM6t/6IYAkUzv6gMHsDE0nF8A82dZLrk89eecWsebs05KmWGAx0dq4b
+              qSkuY/wFVbJTJurrw4U7HWXLqv3ZZIQ5LAdTjGDv4IXb7cwvtMQ/e6UCgYEA3NyU
+              VHnQ5aRaDouhbzJYr09RZsxv4h+4uUaouJJhh9UJO/MHlJZ6hgKbEImJ/jOSgMKL
+              0PsWkS3Nh92FD1giSWlhSVUonxfp3KGVI/V/79ACdWoJ4FlgOlelPPrEq5kxR/lL
+              yajMC55bhQTvx6u0Qz7GdVbCWymD9EZVcAYVTr8CgYAdTpb6g1fmhKUeCL6wq/93
+              UhaWAE66RUPQOLG8lFlVezTKwMkK5LTT6YxELFoXHIN551TCSG8TQR6JP58HyYjW
+              HyloCAQpRfOCyxP8aTppTl0Ii5pAfF3luiL9vvx0ZRfG5NRSug0pr1UxAGatbTCV
+              N+EhbxoSw4I/mbIqbBxqgQKBgQDCLKO0CU0hOHd8pkIN0wOpTWDRshcDhMQREBAy
+              BW/9zcxKioY1mn6p5wyRY3qQpKK+1Uu7NaVHii9SrezX6rJqPF2t7VLDXHDc6qqG
+              bMZH/mbK96krNyik4n2BuS7DdvGex4xcBS0vYdAwiICO2WSoYj501wwUvdEnJ9bh
+              oFeHXQKBgQCNTVBxq8i+sgEHh2DE/jlpheUZb+OLQijpwlF1gcw0NRFZc+d5f+wE
+              UOSeEIG/dj6Vfx7M+vsaQALuewCf6iuXP024v/KDKSUFY4Sl6I+xwmArVRXAbo/w
+              4mPRaehCM2qoHUE7GPiFCJqQ1t49Mg/+7qYyasdBd2GvMzc+RykfWA==
+              -----END RSA PRIVATE KEY-----
 
 
-         - name: 'private_subnet_name'
-           value: 'provider_subnet'
-         - name: 'private_network_name'
-           value: 'provider'
-         - name: 'public_subnet_name'
-           value: 'private_subnet'
-         - name: 'public_network_name'
-           value: 'private_network'
-         - name: 'router_name'
-           value: 'router1'
-         - name: 'external_network_name'
-           value: 'external_network'
+          - name: 'agent_key_public'
+            value: |
+              ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAgJTYbfKC+adktZu3etKSSjw6pxRqOVrSuU7jJ6+ssFLLftbxi5YJL8ITllmfChZnqJecGiBFotbzr5WekGX8ROqSHT1p984bX0hJRjrsxPLirnX/bqYGoQudse3F/D6bUlkusA/t4ZFFibkOFiDp0kwpOa/Ch4sQAqiYacqO2/KBKRf5r6xTgdQyUt9GnQ7iZCOz5oaky889z37Jjy1J3EiAej8sRxKo+4b5rNke+YozCpoF/c7IORpgguVW5sBI5af7jfRJwWpTq4UoGiiIHc47qJVbl7PPJUfVtx4mswiS3LifgYf/N+/ohWpf/ERKsp0SRIDuS8tAIvTFkoYb michaels@LAPTOP-UK8AE0VF
 
-         - name: 'cfy_user'
-           value: 'admin'
-         - name: 'cfy_password'
-           value: 'admin'
-         - name: 'cfy_tenant'
-           value: 'project_tenant'
 
-         - name: 'kubernetes_master_ip'
-           value: 'X'
-         - name: 'kubernetes_certificate_authority_data'
-           value: 'X'
-         - name: 'kubernetes_master_port'
-           value: 'X'
-         - name: 'kubernetes-admin_client_key_data'
-           value: 'X'
-         - name: 'kubernetes-admin_client_certificate_data'
-           value: 'X'
+          - name: 'private_subnet_name'
+            value: 'provider_subnet'
+          - name: 'private_network_name'
+            value: 'provider'
+          - name: 'public_subnet_name'
+            value: 'private_subnet'
+          - name: 'public_network_name'
+            value: 'private_network'
+          - name: 'router_name'
+            value: 'router1'
+          - name: 'external_network_name'
+            value: 'external_network'
+
+          - name: 'cfy_user'
+            value: 'admin'
+          - name: 'cfy_password'
+            value: 'admin'
+          - name: 'cfy_tenant'
+            value: 'project_tenant'
+
+          - name: 'kubernetes_master_ip'
+            value: 'X'
+          - name: 'kubernetes_certificate_authority_data'
+            value: 'X'
+          - name: 'kubernetes_master_port'
+            value: 'X'
+          - name: 'kubernetes-admin_client_key_data'
+            value: 'X'
+          - name: 'kubernetes-admin_client_certificate_data'
+            value: 'X'
