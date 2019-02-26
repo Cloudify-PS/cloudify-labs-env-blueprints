@@ -171,7 +171,8 @@ MTU=1470
 ONBOOT=yes
 EOB
 
-sudo service network restart
+sudo systemctl restart network
+sudo systemctl restart openvswitch
 
 # rabbitmq-server.service edit
 sudo sed -i -e '/\[Service\]/a RestartSec=15s' /usr/lib/systemd/system/rabbitmq-server.service
@@ -329,6 +330,15 @@ curl http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img -o /tmp
 openstack image create --disk-format raw --id a95c112f-a1ab-40b4-a3cc-7604485a43d2 --file /tmp/cirros-0.4.0-x86_64-disk.img cirros
 rm -f /tmp/cirros-0.4.0-x86_64-disk.img
 
+#create flavors
+echo "Create Flavor 1 Core & 2 GB RAM 20 GB Disk - 1x2"
+openstack flavor create --id '4d798e17-3439-42e1-ad22-fb956ec22b54' --ram 2048 --disk 20 --vcpus 1 --public 1x2
+
+echo "Create Flavor 2 Core & 2 GB RAM 20 GB Disk - 2x2"
+openstack flavor create --id '62ed898b-0871-481a-9bb4-ac5f81263b33' --ram 2048 --disk 20 --vcpus 2 --public 2x2
+
+echo "Create Flavor for Cloudify Manager 2 Cores,  5GB RAM 20 GB Disk -  cloudify_flavor"
+openstack flavor create --id 'b1cefcbf-fab9-40d9-a084-8aeb2514028b' --ram 5000 --disk 20 --vcpus 2 --public cloudify_flavor
 
 # Change admin password
 openstack user password set --password $PASSWORD --original-password $OS_PASSWORD
@@ -608,6 +618,12 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmyVtf2Wq0vIurX60IMtULqHdMzCXGZqfCW8
 sudo chmod 700 /home/cloudify/.ssh
 sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
 sudo chown -R cloudify:cloudify /home/cloudify/.ssh
+
+# Copy keystone_admin file
+sudo cp keystonerc_admin /root/
+sudo cp keystonerc_admin /home/cloudify/
+sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
+
 
 history -c
 sudo poweroff
