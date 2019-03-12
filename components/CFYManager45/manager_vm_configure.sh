@@ -32,8 +32,8 @@ public_key=$(sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub)
 # add training key
 training_pem=$(ctx download-resource "certs/training_vm/training.pem")
 training_pub=$(ctx download-resource "certs/training_vm/training.rsa.pub")
-sudo mv $training_pub "/etc/cloudify/cfy-training.rsa.pub"
-sudo mv $training_pem "/etc/cloudify/cfy-training.pem"
+sudo cp $training_pub "/etc/cloudify/cfy-training.rsa.pub"
+sudo cp $training_pem "/etc/cloudify/cfy-training.pem"
 sudo chown cfyuser:cfyuser /etc/cloudify/cfy-training*
 sudo chmod 600 /etc/cloudify/cfy-training*
 sudo cat /etc/cloudify/cfy-training.rsa.pub >> /home/centos/.ssh/authorized_keys
@@ -47,18 +47,11 @@ sudo -u centos cfy status >> /tmp/cfy_status.txt 2>&1 &
 
 # create secrets
 ctx logger info "Creating Secrests"
-sudo -u centos cfy secret create ubuntu_trusty_image -s 05bb3a46-ca32-4032-bedd-8d7ebd5c8100 >> /tmp/cfy_status.txt 2>&1 &
-sudo -u centos cfy secret create centos_core_image -s aee5438f-1c7c-497f-a11e-53360241cf0f >> /tmp/cfy_status.txt 2>&1 &
-
-sudo -u centos cfy secret create small_image_flavor -s 4d798e17-3439-42e1-ad22-fb956ec22b54 >> /tmp/cfy_status.txt 2>&1 &
-#cfy secret create medium_image_flavor -s 62ed898b-0871-481a-9bb4-ac5f81263b33
-sudo -u centos cfy secret create medium_image_flavor -s 3 >> /tmp/cfy_status.txt 2>&1 &
-sudo -u centos cfy secret create large_image_flavor -s 62ed898b-0871-481a-9bb4-ac5f81263b33 >> /tmp/cfy_status.txt 2>&1 &
 
 
 # Create private_key as plain secret
-sudo -u centos cfy secret create agent_key_private --secret-file /etc/cloudify/cfy-training.pem >> /tmp/cfy_status.txt 2>&1 &
-sudo -u centos cfy secret create agent_key_public --secret-file /etc/cloudify/cfy-training.rsa.pub >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create agent_key_private --secret-file $training_pem >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create agent_key_public --secret-file $training_pub >> /tmp/cfy_status.txt 2>&1 &
 
 
 ctx logger info "Creating k8s Secrests"
