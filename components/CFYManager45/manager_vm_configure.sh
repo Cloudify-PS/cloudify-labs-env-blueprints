@@ -66,7 +66,7 @@ sudo -u centos cfy secrets create cfy_password -s admin >> /tmp/cfy_status.txt 2
 sudo -u centos cfy secrets create cfy_tenant -s default_tenant >> /tmp/cfy_status.txt 2>&1 &
 
 
-cfy plugins  bundle-upload >> /tmp/cfy_status.txt 2>&1
+sudo -u centos cfy plugins  bundle-upload >> /tmp/cfy_status.txt 2>&1
 
 
 ctx logger info "Script Ends"
