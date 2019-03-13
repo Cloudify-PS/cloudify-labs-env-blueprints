@@ -217,7 +217,7 @@ node_templates:
       openstack_config: *openstack_config
       volume:
         size: 80
-        imageRef: { get_input: manager_image_id }
+        imageRef: { get_input: vm_image_id }
         volume_type: { get_input: oib_volume_type }
       boot: true
 
@@ -227,7 +227,7 @@ node_templates:
       openstack_config: *openstack_config
       volume:
         size: 160
-        imageRef: { get_input: manager_image_id }
+        imageRef: { get_input: vm_image_id }
         volume_type: { get_input: oib_volume_type }
       boot: true
 
