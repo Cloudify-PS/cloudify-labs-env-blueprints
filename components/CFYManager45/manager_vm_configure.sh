@@ -59,6 +59,7 @@ ctx logger info "Creating k8s Secrests"
 
 sudo -u centos cfy secrets create k8s_master_ip -s  "${k8s_master_ip}" >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secrets create k8s_node_ip   -s  "${k8s_node_ip}"  >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secrets create k8s_load_ip   -s  "${k8s_load_ip}"  >> /tmp/cfy_status.txt 2>&1 &
 
 ctx logger info "Creating Deplyment Proxy Secrests"
 sudo -u centos cfy secrets create cfy_user -s admin >> /tmp/cfy_status.txt 2>&1 &
