@@ -7,6 +7,10 @@ sudo -u centos  cfy plugins upload \
     "http://repository.cloudifysource.org/cloudify/wagons/cloudify-dblb/0.2/cloudify_dblb-0.2-py27-none-linux_x86_64-centos-Core.wgn" \
     -y "http://www.getcloudify.org/spec/dblb/0.2/plugin.yaml"  >> /tmp/cfy_status.txt 2>&1
 
+sudo -u centos  cfy plugins upload \
+    "http://repository.cloudifysource.org/cloudify/wagons/cloudify-awssdk-plugin/2.8.1/cloudify_awssdk_plugin-2.8.1-py27-none-linux_x86_64-centos-Core.wgn" \
+    -y "http://www.getcloudify.org/spec/awssdk-plugin/2.8.1/plugin.yaml"  >> /tmp/cfy_status.txt 2>&1
+
 
 # Put AWS Network Blueprint before uploading the AWS DB and LB.
 sudo -u centos  cfy blueprints upload -n update-blueprint.yaml \
