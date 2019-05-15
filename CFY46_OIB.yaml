@@ -21,9 +21,12 @@ inputs:
     type: string
     default: "AA"
 
-  plugins_repo:
+
+
+  licence:
     type: string
-    default: "https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Plugins/"
+    default: "https://storage.reading-a.openstack.memset.com/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Licence/Lab_cloudify_license_460519.yaml"
+
 
 
   customer_name:
@@ -46,14 +49,10 @@ inputs:
     type: string
     default: 'HighPerformance'
 
-  oib_image_id:
-    type: string
-    default: { get_secret : OIB_Kilo_ImageID }
-
 
   manager_image_id:
     type: string
-    default: { get_secret : CFY455ImageID }
+    default: { get_secret : CFY46ImageID }
 
   manager_flavor_id:
     type: string
@@ -168,7 +167,7 @@ node_templates:
     properties:
       openstack_config: *openstack_config
       volume:
-        size: { get_input: oib_disk_size } 
+        size: 80
         imageRef: { get_input: oib_image_id }
         volume_type: { get_input: oib_volume_type }
       boot: true
@@ -251,9 +250,10 @@ node_templates:
     interfaces:
       cloudify.interfaces.lifecycle:
         configure:
-          implementation: components/CFYManager45/manager_oib_configure.sh
+          implementation: components/CFYManager46/manager_oib_configure.sh
           inputs:
-            plugins_repo: { get_input: plugins_repo }
+            plugins: { get_input: plugins_bundle }
+            licence: { get_input: licence }
     relationships:
       - target: cfy_manager
         type: cloudify.relationships.contained_in
@@ -319,21 +319,3 @@ node_templates:
         type: cloudify.relationships.contained_in
       - target: oib_cloudify_config
         type: cloudify.relationships.depends_on
-
-#  guides:
-#    type: cloudify.nodes.ApplicationModule
-#    capabilities:
-#      scalable:
-#        properties:
-#          default_instances: { get_input: use_guides }
-#    interfaces:
-#      cloudify.interfaces.lifecycle:
-#        configure:
-#          implementation: components/CFYManager4x/install_guides.sh
-#          inputs:
-#            use_sudo: true
-#    relationships:
-#      - target: cfy_manager
-#        type: cloudify.relationships.contained_in
-#      - target: oib_cloudify_config
-#        type: cloudify.relationships.depends_on

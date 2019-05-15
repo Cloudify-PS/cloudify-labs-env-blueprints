@@ -1,0 +1,74 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+  oib_image_id:
+    type: string
+    default: { get_secret : OIB_Kilo_Testing_ImageID }
+
+  oib_flavor_id:
+    type: string
+    default: { get_secret : Flavor8x16 }
+
+  plugins_bundle:
+    type: string
+    default: { get_secret : CFY46VanillaPluginsBundle }
+
+  oib_disk_size:
+    type: integer
+    default: 80
+
+imports:
+  - CFY46_OIB.yaml
+
+
+
+outputs:
+
+  integration:
+    value:
+      manager: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+      composer: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/composer" ] }
+      iaas_dash: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+      vpn_file:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
+      ssh_ip:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+      ssh_user: "centos"
+
+  lab_env:
+    description: OpenStack Cloudify Lab
+    value:
+      video: https://www.youtube.com/embed/psJhdw78kkw
+      suspend: false
+
+  lab_ui_outputs:
+    value:
+      - title: 'Cloudify Manager'
+        open: yes
+        items:
+          - name: 'Cloudify Manager Credentials'
+            value: 'username: admin password: admin'
+          - name: 'Cloudify Manager Link'
+            value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+          - name: 'CLI command'
+            value: { concat: ["cfy profiles use " , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
+          - name: 'IP Address'
+            value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+
+
+      - title: 'VPN Configuration'
+        open: no
+        items:
+          - name: 'OpenVpn Configuration File'
+            value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
+          - name: 'VPN Portal'
+            value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+          - name: 'VPN Configuration Guide'
+            value: 'https://cloudify.co/knowledge-base/cloudify-labs-vpn-configuration-guide/'
+
+      - title: 'Lab OpenStack IaaS'
+        open: no
+        items:
+          - name: 'OpenStack Dashboard Credentials'
+            value: 'username: admin password: cloudify1234'
+          - name: 'OpenStack Dashboard'
+            value:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
