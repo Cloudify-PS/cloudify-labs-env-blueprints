@@ -7,7 +7,9 @@ REPO=$plugins_repo
 
 # install build
 ctx logger info "Installing packages"
-sudo yum -y install gcc python-devel wget
+sudo yum -y install gcc python-devel wget python-netaddr
+
+sudo sh -c "source /opt/mgmtworker/env/bin/activate ; pip install netaddr"
 
 # configure route, now and permanently
 ctx logger info "Setting Static routes"
@@ -102,6 +104,8 @@ sudo -u centos cfy blueprints upload -n simple-blueprint.yaml -b "openstack-exam
 
 ctx logger info "Creating Openstack Network Deployment"
 sudo -u centos cfy deployments create -b "openstack-example-network"  "openstack-example-network" -i "external_network_name=external_network"  >> /tmp/cfy_status.txt 2>&1
+
+sleep 10
 
 ctx logger info "Installing Openstack Network Deployment"
 sudo -u centos cfy executions start install -d "openstack-example-network"  >> /tmp/cfy_status.txt 2>&1

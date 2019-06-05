@@ -4,8 +4,9 @@
 
 # install build
 ctx logger info "Installing packages"
-sudo yum -y install gcc python-devel wget
+sudo yum -y install gcc python-devel wget python-netaddr
 
+sudo sh -c "source /opt/mgmtworker/env/bin/activate ; pip install netaddr"
 
 # configure route, now and permanently
 #ctx logger info "Setting Static routes"
@@ -47,6 +48,10 @@ sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub >> /home/centos/.ssh/authorized_key
 
 sudo -u centos cfy status >> /tmp/cfy_status.txt 2>&1 &
 
+#handle licence
+sudo -u centos curl $licence  -o /tmp/cfy_licence
+sudo -u centos cfy license upload /tmp/cfy_licence
+sudo -u centos rm /tmp/cfy_licence
 
 # create secrets
 ctx logger info "Creating Secrests"
@@ -62,7 +67,7 @@ ctx logger info "Creating k8s Secrests"
 
 sudo -u centos cfy secrets create k8s_master_ip -s  "${k8s_master_ip}" >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secrets create k8s_node_ip   -s  "${k8s_node_ip}"  >> /tmp/cfy_status.txt 2>&1 &
-sudo -u centos cfy secrets create k8s_load_ip   -s  "${k8s_load_ip}"  >> /tmp/cfy_status.txt 2>&1 &
+
 
 ctx logger info "Creating Deplyment Proxy Secrests"
 sudo -u centos cfy secrets create cfy_user -s admin >> /tmp/cfy_status.txt 2>&1 &

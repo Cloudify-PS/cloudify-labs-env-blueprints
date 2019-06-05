@@ -148,6 +148,8 @@ node_templates:
         type: cloudify.openstack.server_connected_to_keypair
       - target: manager_volume
         type: cloudify.relationships.connected_to
+      - target: manager_floating_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
 
 ##
 ## Infra
@@ -182,6 +184,13 @@ node_templates:
         volume_type: { get_input: oib_volume_type }
       boot: true
 
+
+  manager_floating_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      openstack_config: *openstack_config
+      floatingip:
+        floating_network_name: { get_secret: external_network_name }
 
 
   lab_floating_ip:
@@ -293,7 +302,7 @@ node_templates:
         create:
           implementation:  components/CFYManager43/scripts/add_external_network.sh
           inputs:
-            public_ip: { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+            public_ip: { get_attribute: [ manager_floating_ip, floating_ip_address ] }
             private_ip: { get_attribute: [ cfy_manager , ip] }
             use_sudo: true
     relationships:

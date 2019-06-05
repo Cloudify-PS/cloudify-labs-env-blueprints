@@ -1,6 +1,6 @@
 node_types:
-  
-  PGSQL.sql.database:
+
+  PGSQL.sql.databaseURL:
     derived_from: cloudify.nodes.ApplicationModule
     properties:
       database:
@@ -15,4 +15,21 @@ node_types:
             database:
               default: { get_property: [SELF, database ] }
             sql_url:
+              default: { get_property: [SELF, sql_file_start ] }
+
+  PGSQL.sql.databaseFile:
+    derived_from: cloudify.nodes.ApplicationModule
+    properties:
+      database:
+        default: ""
+      sql_file_start:
+        default: ""
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start:
+          implementation: components/PGSQL/scripts/pgsql_bp_start.sh
+          inputs:
+            database:
+              default: { get_property: [SELF, database ] }
+            sql_path:
               default: { get_property: [SELF, sql_file_start ] }

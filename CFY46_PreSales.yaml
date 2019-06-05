@@ -1,5 +1,11 @@
 tosca_definitions_version: cloudify_dsl_1_3
 
+
+imports:
+  - CFY46_OIB.yaml
+  - components/PGSQL/types.yaml
+
+
 inputs:
 
   oib_image_id:
@@ -18,10 +24,24 @@ inputs:
     type: integer
     default: 80
 
-imports:
-  - CFY46_OIB.yaml
+  blueprint_catalog:
+    type: string
+    default: //s3-eu-west-1.amazonaws.com/cloudify-labs/catalogs/catalog.json
+    # Not used for referance only
 
 
+node_templates:
+
+  presales_catalog:
+    type: PGSQL.sql.databaseFile
+    properties:
+      database: "stage"
+      sql_file_start: components/PreSales46/SQL/stage-dump-UserApps_catalog.sql
+    relationships:
+      - target: cfy_manager
+        type: cloudify.relationships.contained_in
+      - target: oib_cloudify_config
+        type: cloudify.relationships.depends_on
 
 outputs:
 
