@@ -9,6 +9,8 @@ if [ "$use_external_resource" != "True" ]; then
 # Use okata openstack repo to install openvswitch
 sudo yum -y install https://repos.fedorapeople.org/repos/openstack/openstack-ocata/rdo-release-ocata-3.noarch.rpm
 
+#sudo yum -y install https://repos.fedorapeople.org/repos/openstack/openstack-rocky/rdo-release-rocky-1.noarch.rpm
+
 sudo yum -y install openvswitch
 
 

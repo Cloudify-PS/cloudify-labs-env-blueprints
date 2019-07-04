@@ -17,6 +17,11 @@ imports:
 
 inputs:
 
+
+  plugins_bundle:
+    type: string
+    default: { get_secret : CFY46VanillaPluginsBundle }
+
   licence:
     type: string
     default: "https://storage.reading-a.openstack.memset.com/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Licence/Lab_cloudify_license_460519.yaml"
