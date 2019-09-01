@@ -52,7 +52,7 @@ inputs:
 
   manager_image_id:
     type: string
-    default: { get_secret : CFY50RC2ImageID }
+    default: { get_secret : CFY50ImageID }
 
   manager_flavor_id:
     type: string
@@ -163,6 +163,13 @@ node_templates:
       resource_id: lab_keypair
       openstack_config: *openstack_config
 
+  training_keypair:
+    type: cloudify.openstack.nodes.KeyPair
+    properties:
+      private_key_path: { get_secret: training_key_private }
+      use_external_resource: True
+      resource_id: Training
+      openstack_config: *openstack_config
 
   lab_volume:
     type: cloudify.openstack.nodes.Volume
@@ -300,12 +307,12 @@ node_templates:
     type: cloudify.nodes.ApplicationModule
     interfaces:
       cloudify.interfaces.lifecycle:
-#        create:
-#          implementation:  components/CFYManager43/scripts/add_external_network.sh
-#          inputs:
-#            public_ip: { get_attribute: [ manager_floating_ip, floating_ip_address ] }
-#            private_ip: { get_attribute: [ cfy_manager , ip] }
-#            use_sudo: true
+        create:
+          implementation:  components/CFYManager50/scripts/add_external_network.sh
+          inputs:
+            public_ip: { get_attribute: [ manager_floating_ip, floating_ip_address ] }
+            private_ip: { get_attribute: [ cfy_manager , ip] }
+            use_sudo: true
     relationships:
       - target: remote_access
         type: cloudify.relationships.depends_on
