@@ -202,7 +202,7 @@ sudo cp /usr/share/doc/spice-html5-0.1.7/apache.conf.sample /etc/httpd/conf.d/sp
 # Allow to allocate more then existing RAM
 sudo crudini --set /etc/nova/nova.conf DEFAULT ram_allocation_ratio 4
 # Allow to allocate more then existing Disk
-sudo crudini --set /etc/nova/nova.conf DEFAULT disk_allocation_ratio = 10
+sudo crudini --set /etc/nova/nova.conf DEFAULT disk_allocation_ratio 10
 
 # apply configs
 sudo systemctl restart openstack-nova-compute
