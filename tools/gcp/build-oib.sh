@@ -278,8 +278,8 @@ sudo chmod +x /etc/tuned/no-thp/script.sh
 sudo tuned-adm profile no-thp
 
 
-sudo cp /root/keystonerc_admin /home/centos
-sudo chown $(whoami):$(whoami) keystonerc_admin
+sudo cp /root/keystonerc_admin ${HOME}
+sudo chown $(whoami):$(whoami) ${HOME}/keystonerc_admin
 
 
 #In some issues with  Newton it may help to run instances
@@ -300,7 +300,7 @@ sudo systemctl daemon-reload
 
 # Create openstack external router and network
 EXTERNAL_NETWORK="external_network"
-source keystonerc_admin
+source ${HOME}/keystonerc_admin
 neutron net-create $EXTERNAL_NETWORK --provider:network_type flat --provider:physical_network extnet --router:external --share
 neutron subnet-create --name ext_sub --enable_dhcp=False --allocation-pool=start=172.25.1.10,end=172.25.1.250 --gateway=172.25.1.1 $EXTERNAL_NETWORK 172.25.1.0/24
 
@@ -345,7 +345,7 @@ openstack flavor create --id 'b1cefcbf-fab9-40d9-a084-8aeb2514028b' --ram 5000 -
 
 # Change admin password
 openstack user password set --password $PASSWORD --original-password $OS_PASSWORD
-sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" keystonerc_admin
+sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" ${HOME}/keystonerc_admin
 sudo sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" /root/keystonerc_admin
 
 #cloud init preserver hostname
@@ -623,7 +623,7 @@ sudo systemctl enable openvpn@server
 # sudo chown -R cloudify:cloudify /home/cloudify/.ssh
 
 # Copy keystone_admin file
-sudo cp keystonerc_admin /root/
+# sudo cp keystonerc_admin /root/
 # sudo cp keystonerc_admin /home/cloudify/
 # sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
 
