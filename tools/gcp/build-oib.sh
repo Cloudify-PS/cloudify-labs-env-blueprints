@@ -218,7 +218,7 @@ sudo systemctl restart libvirt-guests
 
 
 # update iptables
-modprobe nf_conntrack_proto_gre
+sudo modprobe nf_conntrack_proto_gre
 sudo iptables -I INPUT -p tcp -m multiport --dports 2222,53333,5671,53229 -m comment --comment "CM manager ports" -j ACCEPT
 sudo iptables -I INPUT -p tcp -m multiport --dports 6082 -m comment --comment "Allow SPICE connections for console access " -j ACCEPT
 sudo iptables -I INPUT -p 47 -j ACCEPT
@@ -235,6 +235,10 @@ sudo iptables -t nat -A POSTROUTING -s 172.25.1.0/24 -d 0/0 -o $NIC -j MASQUERAD
 # save iptables file
 sudo iptables-save | sudo tee /etc/sysconfig/iptables
 
+# enable forwarding
+echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
+
+
 # tuning nested
 # Enable nested mode
 echo "options kvm_intel nested=1" | sudo tee -a /etc/modprobe.d/kvm.conf
@@ -242,6 +246,7 @@ echo "options kvm_intel nested=1" | sudo tee -a /etc/modprobe.d/kvm.conf
 # Allow to overcommit memory for instances
 echo "vm.overcommit_memory=1" | sudo tee -a /etc/sysctl.conf
 
+sudo sysctl -p
 
 sudo mkdir /etc/tuned/no-thp
 cat << EOB | sudo tee /etc/tuned/no-thp/tuned.conf
@@ -352,7 +357,7 @@ sudo sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" /root/keystonerc_admin
 
 
 #OpenVPN
-sudo yum -y install openvpn
+sudo yum -y --enablerepo=epel install openvpn
 
 cat << EOB | sudo tee /etc/openvpn/server.conf
 port 1194
@@ -614,18 +619,8 @@ sudo systemctl enable openvpn@server
 #create user cloudify and set authorithed keys
 # Cloudify user uses to set CM port forwarding via OIB
 
-# sudo adduser cloudify
-# sudo usermod -aG wheel cloudify
-# sudo mkdir /home/cloudify/.ssh
-# echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmyVtf2Wq0vIurX60IMtULqHdMzCXGZqfCW8ACp+Kh1JVHLIwf5tEf/1nxqSCpyBUbCKkmbxB8fpcqbG0OA1+fHAzu1gbCOGpLpDDJ6HcSHUVTAUYhGlQBHtHWZ3lahrpmPuOauy6mAso9oJfQfq/sbLn5sDw8mVv8rqkeS62a/6pU6gvfILvhMUElhoEpLuegMVaCU8K1Jlzfy4AXPyaSA9KafVZDxj9hIPbqB5ErG+YXKT/og5WK3L/2v4ouYVhcB8cXjgmcxFXIlHPOct2zOcAdxlE4Pk5b8RPEteDO+BXFfI2+/IPkkpKvKENFggvvRkzH+MYO5venEm3o8/Dn oib-key" | sudo tee -a /home/cloudify/.ssh/authorized_keys
-# sudo chmod 700 /home/cloudify/.ssh
-# sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
-# sudo chown -R cloudify:cloudify /home/cloudify/.ssh
-
 # Copy keystone_admin file
-# sudo cp keystonerc_admin /root/
-# sudo cp keystonerc_admin /home/cloudify/
-# sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
+sudo cp keystonerc_admin /root/
 
 
 # history -c
