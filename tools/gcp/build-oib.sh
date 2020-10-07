@@ -607,7 +607,7 @@ sudo cp ${HOME}/keystonerc_admin /home/cloudify/
 sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
 
 
-cd ~
+cd ${HOME}
 rm -fr ${HOME}/cloudify-labs-env-blueprints
 history -c
 sudo poweroff
