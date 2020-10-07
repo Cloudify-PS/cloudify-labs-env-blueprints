@@ -609,7 +609,7 @@ sudo systemctl enable openvpn@server
 
 # clean SSH public keys of centos and root
 sudo rm -f /root/.ssh/authorized_keys
-rm -f ~/.ssh/authorized_keys
+rm -f ${HOME}/.ssh/authorized_keys
 
 #create user cloudify and set authorithed keys
 # Cloudify user uses to set CM port forwarding via OIB
@@ -623,10 +623,12 @@ sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
 sudo chown -R cloudify:cloudify /home/cloudify/.ssh
 
 # Copy keystone_admin file
-sudo cp keystonerc_admin /root/
-sudo cp keystonerc_admin /home/cloudify/
+sudo cp ${HOME}/keystonerc_admin /root/
+sudo cp ${HOME}/keystonerc_admin /home/cloudify/
 sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
 
 
+cd ${HOME}
+rm -fr ${HOME}/cloudify-labs-env-blueprints
 history -c
 sudo poweroff
