@@ -617,7 +617,7 @@ rm -f ~/.ssh/authorized_keys
 sudo adduser cloudify
 sudo usermod -aG wheel cloudify
 sudo mkdir /home/cloudify/.ssh
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmyVtf2Wq0vIurX60IMtULqHdMzCXGZqfCW8ACp+Kh1JVHLIwf5tEf/1nxqSCpyBUbCKkmbxB8fpcqbG0OA1+fHAzu1gbCOGpLpDDJ6HcSHUVTAUYhGlQBHtHWZ3lahrpmPuOauy6mAso9oJfQfq/sbLn5sDw8mVv8rqkeS62a/6pU6gvfILvhMUElhoEpLuegMVaCU8K1Jlzfy4AXPyaSA9KafVZDxj9hIPbqB5ErG+YXKT/og5WK3L/2v4ouYVhcB8cXjgmcxFXIlHPOct2zOcAdxlE4Pk5b8RPEteDO+BXFfI2+/IPkkpKvKENFggvvRkzH+MYO5venEm3o8/Dn oib-key" | sudo tee -a /home/cloudify/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAgJTYbfKC+adktZu3etKSSjw6pxRqOVrSuU7jJ6+ssFLLftbxi5YJL8ITllmfChZnqJecGiBFotbzr5WekGX8ROqSHT1p984bX0hJRjrsxPLirnX/bqYGoQudse3F/D6bUlkusA/t4ZFFibkOFiDp0kwpOa/Ch4sQAqiYacqO2/KBKRf5r6xTgdQyUt9GnQ7iZCOz5oaky889z37Jjy1J3EiAej8sRxKo+4b5rNke+YozCpoF/c7IORpgguVW5sBI5af7jfRJwWpTq4UoGiiIHc47qJVbl7PPJUfVtx4mswiS3LifgYf/N+/ohWpf/ERKsp0SRIDuS8tAIvTFkoYb cloudify" | sudo tee -a /home/cloudify/.ssh/authorized_keys
 sudo chmod 700 /home/cloudify/.ssh
 sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
 sudo chown -R cloudify:cloudify /home/cloudify/.ssh

@@ -14,7 +14,7 @@ fi
 PASSWORD="cloudify1234"
 NIC="eth0"
 IPADDRESS=`ip a show dev $NIC | sed '3q;d' | gawk '{match($2,/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/);ip = substr($2,RSTART,RLENGTH);print ip}'`
-CONFIG_CINDER_VOLUMES_SIZE="20G"
+CONFIG_CINDER_VOLUMES_SIZE="30G"
 
 # set cloud init. disable hostname and hosts config
 sudo sed -i -e '/host/ s/^#*/#/' /etc/cloud/cloud.cfg
@@ -75,20 +75,6 @@ DNS1=172.25.1.1
 MTU=1500
 EOB
 
-
-# cat << EOB | sudo tee /etc/sysconfig/network-scripts/ifcfg-$NIC
-# DEVICE=$NIC
-# TYPE=Ethernet
-# USERCTL="yes"
-# PEERDNS="yes"
-# BOOTPROTO="dhcp"
-# IPV6INIT="no"
-# PERSISTENT_DHCLIENT="1"
-# ONBOOT=yes
-# MTU=1500
-# EOB
-
-
 cat << EOB | sudo tee /etc/sysconfig/network-scripts/ifcfg-br-mng
 DEVICE=br-mng
 DEVICETYPE=ovs
@@ -146,18 +132,6 @@ DNS1=172.25.1.1
 MTU=1500
 EOB
 
-
-# cat << EOB | sudo tee /etc/sysconfig/network-scripts/ifcfg-$NIC
-# DEVICE=$NIC
-# TYPE=Ethernet
-# USERCTL="yes"
-# PEERDNS="yes"
-# BOOTPROTO="dhcp"
-# IPV6INIT="no"
-# PERSISTENT_DHCLIENT="1"
-# ONBOOT=yes
-# MTU=1500
-# EOB
 
 cat << EOB | sudo tee /etc/sysconfig/network-scripts/ifcfg-br-mng
 DEVICE=br-mng
@@ -613,15 +587,27 @@ sudo systemctl start openvpn@server
 sudo systemctl enable openvpn@server
 
 # clean SSH public keys of centos and root
-# sudo rm -f /root/.ssh/authorized_keys
-# rm -f ~/.ssh/authorized_keys
+sudo rm -f /root/.ssh/authorized_keys
+rm -f ~/.ssh/authorized_keys
 
 #create user cloudify and set authorithed keys
 # Cloudify user uses to set CM port forwarding via OIB
 
+sudo adduser cloudify
+sudo usermod -aG wheel cloudify
+sudo mkdir /home/cloudify/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAgJTYbfKC+adktZu3etKSSjw6pxRqOVrSuU7jJ6+ssFLLftbxi5YJL8ITllmfChZnqJecGiBFotbzr5WekGX8ROqSHT1p984bX0hJRjrsxPLirnX/bqYGoQudse3F/D6bUlkusA/t4ZFFibkOFiDp0kwpOa/Ch4sQAqiYacqO2/KBKRf5r6xTgdQyUt9GnQ7iZCOz5oaky889z37Jjy1J3EiAej8sRxKo+4b5rNke+YozCpoF/c7IORpgguVW5sBI5af7jfRJwWpTq4UoGiiIHc47qJVbl7PPJUfVtx4mswiS3LifgYf/N+/ohWpf/ERKsp0SRIDuS8tAIvTFkoYb cloudify" | sudo tee -a /home/cloudify/.ssh/authorized_keys
+sudo chmod 700 /home/cloudify/.ssh
+sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
+sudo chown -R cloudify:cloudify /home/cloudify/.ssh
+
 # Copy keystone_admin file
 sudo cp keystonerc_admin /root/
+sudo cp keystonerc_admin /home/cloudify/
+sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
 
 
-# history -c
-# sudo poweroff
+cd ~
+rm -fr cloudify-labs-env-blueprints
+history -c
+sudo poweroff
