@@ -17,20 +17,20 @@ IPADDRESS=`ip a show dev $NIC | sed '3q;d' | gawk '{match($2,/[0-9]{1,3}\.[0-9]{
 CONFIG_CINDER_VOLUMES_SIZE="30G"
 
 # set cloud init. disable hostname and hosts config
-sudo sed -i -e '/host/ s/^#*/#/' /etc/cloud/cloud.cfg
+# sudo sed -i -e '/host/ s/^#*/#/' /etc/cloud/cloud.cfg
 
 
-cat << EOB | sudo tee /etc/cloud/cloud.cfg.d/99_hostname.cfg
-#cloud-config
-hostname: $RELEASE_NAME-oib
-fqdn: $RELEASE_NAME-oib.openstacklocal
-EOB
+# cat << EOB | sudo tee /etc/cloud/cloud.cfg.d/99_hostname.cfg
+# #cloud-config
+# hostname: $RELEASE_NAME-oib
+# fqdn: $RELEASE_NAME-oib.openstacklocal
+# EOB
 
 cat << EOB | sudo tee -a /etc/hosts
-10.10.25.1 $RELEASE_NAME-oib $RELEASE_NAME-oib.openstacklocal
+10.10.25.1 oib oib.cloudify.labs
 EOB
 
-sudo hostnamectl set-hostname $RELEASE_NAME-oib.openstacklocal
+# sudo hostnamectl set-hostname $RELEASE_NAME-oib.openstacklocal
 
 # fix root's authorized_keys
 sudo sed -i -e 's/.*ssh-rsa/ssh-rsa/' /root/.ssh/authorized_keys
@@ -159,8 +159,8 @@ sudo crudini --set /etc/nova/nova.conf libvirt virt_type kvm
 sudo crudini --set /etc/nova/nova.conf DEFAULT resume_guests_state_on_host_boot true
 
 # Enable spice
-sudo yum install -y epel-release.noarch
-sudo yum install -y openstack-nova-spicehtml5proxy.noarch spice-html5.noarch python-websockify.noarch spice-server.x86_64 spice-protocol.noarch
+# sudo yum install -y epel-release.noarch
+sudo yum install --enablerepo=epel -y openstack-nova-spicehtml5proxy.noarch spice-html5.noarch python-websockify.noarch spice-server.x86_64 spice-protocol.noarch
 sudo crudini --set /etc/nova/nova.conf DEFAULT web "/usr/share/spice-html5"
 sudo crudini --set /etc/nova/nova.conf vnc enabled false
 sudo crudini --set /etc/nova/nova.conf spice enabled true
@@ -326,9 +326,6 @@ openstack flavor create --id 'b1cefcbf-fab9-40d9-a084-8aeb2514028b' --ram 5000 -
 openstack user password set --password $PASSWORD --original-password $OS_PASSWORD
 sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" ${HOME}/keystonerc_admin
 sudo sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" /root/keystonerc_admin
-
-#cloud init preserver hostname
-
 
 #OpenVPN
 sudo yum -y --enablerepo=epel install openvpn

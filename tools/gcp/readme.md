@@ -40,7 +40,8 @@ gcloud compute instances create oib-instance \
   --image oib-image \
   --boot-disk-size=200GB \
   --machine-type=n1-standard-8 \
-  --tags=openvpn
+  --tags=openvpn \
+  --hostname=oib.cloudify.labs
 ```
 
 5. Add SSH to the instance:
@@ -55,3 +56,10 @@ gcloud compute instances add-metadata oib-instance \
 --metadata-from-file ssh-keys=ssh_keys.pub
 ```
 
+5. Create OIB image
+
+```
+gcloud compute images create oib-image-$(date -Idate) \
+  --source-disk oib-instance --source-disk-zone europe-west2-a \
+  --licenses "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+```
