@@ -3,28 +3,11 @@
 # Use openstack flavor m1.xlarge
 
 #VARIABLES
-if [ -z "${1}" ]; then
-    echo "Set a release name"
-    echo "Usage: bash $0 <release name>"
-    exit 1
-else
-    RELEASE_NAME=${1}
-fi
-
+RELEASE_NAME="stein"
 PASSWORD="cloudify1234"
 NIC="eth0"
 IPADDRESS=`ip a show dev $NIC | sed '3q;d' | gawk '{match($2,/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/);ip = substr($2,RSTART,RLENGTH);print ip}'`
 CONFIG_CINDER_VOLUMES_SIZE="30G"
-
-# set cloud init. disable hostname and hosts config
-# sudo sed -i -e '/host/ s/^#*/#/' /etc/cloud/cloud.cfg
-
-
-# cat << EOB | sudo tee /etc/cloud/cloud.cfg.d/99_hostname.cfg
-# #cloud-config
-# hostname: $RELEASE_NAME-oib
-# fqdn: $RELEASE_NAME-oib.openstacklocal
-# EOB
 
 cat << EOB | sudo tee -a /etc/hosts
 10.10.25.1 oib oib.cloudify.labs
@@ -103,8 +86,14 @@ packstack --allinone \
           --keystone-admin-passwd=$PASSWORD \
           --os-neutron-ovs-bridge-mappings=extnet:br-ex \
           --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
-          --os-neutron-ml2-type-drivers=geneve,vxlan,flat \
+          --os-neutron-ml2-type-drivers=vxlan,flat \
+          --os-neutron-ml2-tenant-network-types=vxlan \
+          --os-neutron-l2-agent=openvswitch \
           --gen-answer-file answers.txt
+
+# Fix answers
+# Next openstack version need to be changed to ovn
+sed -i -e "s/CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS=ovn/CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS=openvswitch,l2population/g" answers.txt
 
 # Fix here IP addresses
 sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
