@@ -30,7 +30,7 @@ cat << EOB | sudo tee -a /etc/hosts
 10.10.25.1 oib oib.cloudify.labs
 EOB
 
-sudo hostnamectl set-hostname $(hostname -f)
+sudo hostnamectl set-hostname $(hostname)
 
 # fix root's authorized_keys
 sudo sed -i -e 's/.*ssh-rsa/ssh-rsa/' /root/.ssh/authorized_keys
@@ -97,7 +97,14 @@ LANG=en_US.utf-8
 LC_ALL=en_US.utf-8
 EOB
 
-packstack --allinone --provision-demo=n --os-neutron-ovs-bridge-mappings=extnet:br-ex --os-neutron-ovs-bridge-interfaces=br-ex:$NIC --os-neutron-ml2-type-drivers=vxlan,flat --gen-answer-file answers.txt
+packstack --allinone \
+          --provision-demo=n \
+          --install-hosts=$(hostname -f)
+          --keystone-admin-passwd=$PASSWORD \
+          --os-neutron-ovs-bridge-mappings=extnet:br-ex \
+          --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
+          --os-neutron-ml2-type-drivers=geneve,vxlan,flat \
+          --gen-answer-file answers.txt
 
 # Fix here IP addresses
 sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
@@ -322,10 +329,10 @@ openstack flavor create --id '62ed898b-0871-481a-9bb4-ac5f81263b33' --ram 2048 -
 echo "Create Flavor for Cloudify Manager 2 Cores,  5GB RAM 20 GB Disk -  cloudify_flavor"
 openstack flavor create --id 'b1cefcbf-fab9-40d9-a084-8aeb2514028b' --ram 5000 --disk 20 --vcpus 2 --public cloudify_flavor
 
-# Change admin password
-openstack user password set --password $PASSWORD --original-password $OS_PASSWORD
-sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" ${HOME}/keystonerc_admin
-sudo sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" /root/keystonerc_admin
+# # Change admin password
+# openstack user password set --password $PASSWORD --original-password $OS_PASSWORD
+# sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" ${HOME}/keystonerc_admin
+# sudo sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" /root/keystonerc_admin
 
 #OpenVPN
 sudo yum -y --enablerepo=epel install openvpn
@@ -583,10 +590,6 @@ EOB
 sudo systemctl start openvpn@server
 sudo systemctl enable openvpn@server
 
-# clean SSH public keys of centos and root
-sudo rm -f /root/.ssh/authorized_keys
-rm -f ${HOME}/.ssh/authorized_keys
-
 #create user cloudify and set authorithed keys
 # Cloudify user uses to set CM port forwarding via OIB
 
@@ -599,10 +602,14 @@ sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
 sudo chown -R cloudify:cloudify /home/cloudify/.ssh
 
 # Copy keystone_admin file
-sudo cp ${HOME}/keystonerc_admin /root/
+# sudo cp ${HOME}/keystonerc_admin /root/
 sudo cp ${HOME}/keystonerc_admin /home/cloudify/
 sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
 
+
+# clean
+sudo rm -f /root/.ssh/authorized_keys
+rm -f ${HOME}/.ssh/authorized_keys
 
 cd ${HOME}
 rm -fr ${HOME}/cloudify-labs-env-blueprints
