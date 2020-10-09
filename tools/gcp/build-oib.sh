@@ -99,7 +99,7 @@ EOB
 
 packstack --allinone \
           --provision-demo=n \
-          --install-hosts=$(hostname -f)
+          --install-hosts=$(hostname -f) \
           --keystone-admin-passwd=$PASSWORD \
           --os-neutron-ovs-bridge-mappings=extnet:br-ex \
           --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
