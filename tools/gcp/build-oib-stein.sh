@@ -3,7 +3,14 @@
 # Use openstack flavor m1.xlarge
 
 #VARIABLES
-RELEASE_NAME="stein"
+if [ -z "${1}" ]; then
+    echo "Set a release name"
+    echo "Usage: bash $0 <release name>"
+    exit 1
+else
+    RELEASE_NAME=${1}
+fi
+
 PASSWORD="cloudify1234"
 NIC="eth0"
 IPADDRESS=`ip a show dev $NIC | sed '3q;d' | gawk '{match($2,/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/);ip = substr($2,RSTART,RLENGTH);print ip}'`
