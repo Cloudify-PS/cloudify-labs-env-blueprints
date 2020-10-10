@@ -87,17 +87,24 @@ LANG=en_US.utf-8
 LC_ALL=en_US.utf-8
 EOB
 
-packstack -d --allinone \
-          --provision-demo=n \
-          --install-hosts=$(hostname -f) \
-          --keystone-admin-passwd=$PASSWORD \
-          --os-neutron-l2-agent=openvswitch \
-          --os-neutron-ovs-bridge-mappings=extnet:br-ex \
-          --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
-          --os-neutron-ml2-mechanism-drivers=openvswitch \
-          --os-neutron-ml2-type-drivers=vxlan,flat \
-          --os-neutron-ml2-tenant-network-types=vxlan \
-          --gen-answer-file answers.txt
+# packstack -d --allinone \
+#           --provision-demo=n \
+#           --install-hosts=$(hostname -f) \
+#           --keystone-admin-passwd=$PASSWORD \
+#           --os-neutron-l2-agent=openvswitch \
+#           --os-neutron-ovs-bridge-mappings=extnet:br-ex \
+#           --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
+#           --os-neutron-ml2-mechanism-drivers=openvswitch \
+#           --os-neutron-ml2-type-drivers=vxlan,flat \
+#           --os-neutron-ml2-tenant-network-types=vxlan \
+#           --gen-answer-file answers.txt
+
+packstack --allinone \
+  --os-neutron-ovn-bridge-mappings=extnet:br-ex \
+  --os-neutron-ovn-bridge-interfaces=br-ex:$NIC \
+  --provision-demo=n \
+  --keystone-admin-passwd=$PASSWORD \
+  --gen-answer-file answers.txt
 
 # Fix answers
 # Fix here IP addresses
