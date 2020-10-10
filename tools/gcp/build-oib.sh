@@ -105,10 +105,10 @@ packstack --allinone \
   --keystone-admin-passwd=$PASSWORD \
   --os-neutron-ovn-bridge-mappings=extnet:br-ex \
   --os-neutron-ovn-bridge-interfaces=br-ex:$NIC \
-  --os-neutron-l2-agent=ovn \
-  --os-neutron-ml2-mechanism-drivers=ovn \
-  --os-neutron-ml2-type-drivers=vxlan,geneve \
-  --os-neutron-ml2-tenant-network-types=vxlan,geneve \
+  --os-neutron-l2-agent=openvswitch \
+  --os-neutron-ml2-mechanism-drivers=openvswitch,l2population \
+  --os-neutron-ml2-type-drivers=vxlan \
+  --os-neutron-ml2-tenant-network-types=vxlan \
   --provision-demo=n \
   --keystone-admin-passwd=$PASSWORD \
   --gen-answer-file answers.txt
