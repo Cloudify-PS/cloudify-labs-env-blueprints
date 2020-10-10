@@ -84,11 +84,12 @@ packstack --allinone \
           --provision-demo=n \
           --install-hosts=$(hostname -f) \
           --keystone-admin-passwd=$PASSWORD \
+          --os-neutron-l2-agent=openvswitch \
           --os-neutron-ovs-bridge-mappings=extnet:br-ex \
           --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
+          --os-neutron-ml2-mechanism-drivers=openvswitch \
           --os-neutron-ml2-type-drivers=vxlan,flat \
           --os-neutron-ml2-tenant-network-types=vxlan \
-          --os-neutron-l2-agent=openvswitch \
           --gen-answer-file answers.txt
 
 # Fix answers
