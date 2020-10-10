@@ -103,15 +103,21 @@ packstack --allinone \
 # Fix here IP addresses
 sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
 sed -i -e "s/CONFIG_CINDER_VOLUMES_SIZE=.*/CONFIG_CINDER_VOLUMES_SIZE=$CONFIG_CINDER_VOLUMES_SIZE/g" answers.txt
-cat ~/.ssh/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
+#Change to tcp due ssh prevent injecting ssh key to new instance
+sed -i -e "s/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=ssh/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp/g" answers.txt
+# clean OVN
+sed -i -e "s/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=.*/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=/g" answers.txt
+sed -i -e "s/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=.*/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=/g" answers.txt
+
+
 # Temporary all SSH root login
+cat ~/.ssh/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
 sudo sed -i -e "s/PermitRootLogin no/PermitRootLogin yes/g" /etc/ssh/sshd_config
 sudo sed -i -e "s/#PermitRootLogin yes/PermitRootLogin yes/g" /etc/ssh/sshd_config
 sudo sed -i -e "s/#GatewayPorts no/GatewayPorts yes/g" /etc/ssh/sshd_config
 sudo sed -i -e "s/#GatewayPorts yes/GatewayPorts yes/g" /etc/ssh/sshd_config
 sudo systemctl restart sshd
-#Change to tcp due ssh prevent injecting ssh key to new instance
-sed -i -e "s/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=ssh/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp/g" answers.txt
+
 packstack --answer-file=answers.txt
 sudo yum install -y openstack-utils openstack-selinux
 
