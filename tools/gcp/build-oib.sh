@@ -97,11 +97,18 @@ EOB
 #           --os-neutron-ml2-mechanism-drivers=openvswitch \
 #           --os-neutron-ml2-type-drivers=vxlan,flat \
 #           --os-neutron-ml2-tenant-network-types=vxlan \
+#           --nova-libvirt-virt-type=kvm \
 #           --gen-answer-file answers.txt
 
 packstack --allinone \
+  --nova-libvirt-virt-type=kvm \
+  --keystone-admin-passwd=$PASSWORD \
   --os-neutron-ovn-bridge-mappings=extnet:br-ex \
   --os-neutron-ovn-bridge-interfaces=br-ex:$NIC \
+  --os-neutron-l2-agent=ovn \
+  --os-neutron-ml2-mechanism-drivers=ovn \
+  --os-neutron-ml2-type-drivers=vxlan,flat,geneve \
+  --os-neutron-ml2-tenant-network-types=vxlan,geneve \
   --provision-demo=n \
   --keystone-admin-passwd=$PASSWORD \
   --gen-answer-file answers.txt
@@ -113,8 +120,8 @@ sed -i -e "s/CONFIG_CINDER_VOLUMES_SIZE=.*/CONFIG_CINDER_VOLUMES_SIZE=$CONFIG_CI
 #Change to tcp due ssh prevent injecting ssh key to new instance
 sed -i -e "s/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=ssh/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp/g" answers.txt
 # clean OVN
-sed -i -e "s/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=.*/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=/g" answers.txt
-sed -i -e "s/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=.*/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=/g" answers.txt
+# sed -i -e "s/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=.*/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=/g" answers.txt
+# sed -i -e "s/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=.*/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=/g" answers.txt
 
 
 # Temporary all SSH root login
@@ -169,7 +176,7 @@ sudo sed -i -e '/\[Service\]/a Restart=on-failure' /usr/lib/systemd/system/rabbi
 sudo systemctl daemon-reload
 
 # nova config
-sudo crudini --set /etc/nova/nova.conf libvirt virt_type kvm
+# sudo crudini --set /etc/nova/nova.conf libvirt virt_type kvm
 sudo crudini --set /etc/nova/nova.conf DEFAULT resume_guests_state_on_host_boot true
 
 # Enable spice

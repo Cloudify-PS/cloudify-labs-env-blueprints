@@ -111,7 +111,11 @@ LANG=en_US.utf-8
 LC_ALL=en_US.utf-8
 EOB
 
-packstack --allinone --provision-demo=n --os-neutron-ovs-bridge-mappings=extnet:br-ex --os-neutron-ovs-bridge-interfaces=br-ex:$NIC --os-neutron-ml2-type-drivers=vxlan,flat --gen-answer-file answers.txt
+packstack --allinone --provision-demo=n \
+  --os-neutron-ovs-bridge-mappings=extnet:br-ex \
+  --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
+  --os-neutron-ml2-type-drivers=vxlan,flat \
+  --gen-answer-file answers.txt
 
 # Fix here IP addresses
 sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
