@@ -100,9 +100,6 @@ packstack --allinone \
           --gen-answer-file answers.txt
 
 # Fix answers
-# Next openstack version need to be changed to ovn
-sed -i -e "s/CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS=ovn/CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS=openvswitch,l2population/g" answers.txt
-
 # Fix here IP addresses
 sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
 sed -i -e "s/CONFIG_CINDER_VOLUMES_SIZE=.*/CONFIG_CINDER_VOLUMES_SIZE=$CONFIG_CINDER_VOLUMES_SIZE/g" answers.txt
