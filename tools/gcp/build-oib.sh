@@ -107,7 +107,7 @@ packstack --allinone \
   --os-neutron-ovn-bridge-interfaces=br-ex:$NIC \
   --os-neutron-l2-agent=openvswitch \
   --os-neutron-ml2-mechanism-drivers=openvswitch,l2population \
-  --os-neutron-ml2-type-drivers=vxlan \
+  --os-neutron-ml2-type-drivers=vxlan,flat \
   --os-neutron-ml2-tenant-network-types=vxlan \
   --provision-demo=n \
   --keystone-admin-passwd=$PASSWORD \
@@ -119,10 +119,6 @@ sed -i -e "s/$IPADDRESS/10.10.25.1/" answers.txt
 sed -i -e "s/CONFIG_CINDER_VOLUMES_SIZE=.*/CONFIG_CINDER_VOLUMES_SIZE=$CONFIG_CINDER_VOLUMES_SIZE/g" answers.txt
 #Change to tcp due ssh prevent injecting ssh key to new instance
 sed -i -e "s/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=ssh/CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL=tcp/g" answers.txt
-# clean OVN
-# sed -i -e "s/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=.*/CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS=/g" answers.txt
-# sed -i -e "s/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=.*/CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET=/g" answers.txt
-
 
 # Temporary all SSH root login
 cat ~/.ssh/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
