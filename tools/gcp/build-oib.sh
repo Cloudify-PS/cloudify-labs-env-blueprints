@@ -108,7 +108,7 @@ packstack --allinone \
   --os-neutron-l2-agent=openvswitch \
   --os-neutron-ml2-mechanism-drivers=openvswitch,l2population \
   --os-neutron-ml2-type-drivers=vxlan,flat \
-  --os-neutron-ml2-tenant-network-types=vxlan \
+  --os-neutron-ml2-tenant-network-types=vxlan,flat \
   --provision-demo=n \
   --keystone-admin-passwd=$PASSWORD \
   --gen-answer-file answers.txt
