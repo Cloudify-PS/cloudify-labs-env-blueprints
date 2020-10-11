@@ -56,10 +56,37 @@ gcloud compute instances add-metadata oib-instance \
 --metadata-from-file ssh-keys=ssh_keys.pub
 ```
 
-5. Create OIB image
+6. Login to the instance by `External IP`.
+7. Run the script `https://github.com/Cloudify-PS/cloudify-labs-env-blueprints/blob/master/tools/gcp/os_pre_config.sh` on the instance.
+8. Login to the instance again.
+9. Install Openstack Train:
+
+```
+cd cloudify-labs-env-blueprints/tools/gcp/
+bash -x build-oib.sh train
+``` 
+
+10. Create OIB image
 
 ```
 gcloud compute images create oib-image-$(date -Idate) \
   --source-disk oib-instance --source-disk-zone europe-west2-a \
   --licenses "https://www.googleapis.com/compute/v1/projects/vm-options/global/licenses/enable-vmx"
+```
+
+11. Create user's OIB lab
+
+```
+gcloud compute instances create oib-users-lab \
+  --zone europe-west2-a \
+  --min-cpu-platform "Intel Haswell" \
+  --image oib-image-2020-10-11 \
+  --boot-disk-size=200GB \
+  --machine-type=n1-standard-8 \
+  --tags=openvpn \
+  --hostname=oib.cloudify.labs
+
+gcloud compute instances add-metadata oib-users-lab \
+--zone europe-west2-a \
+--metadata-from-file ssh-keys=ssh_keys.pub
 ```
