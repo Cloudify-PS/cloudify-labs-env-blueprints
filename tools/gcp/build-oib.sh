@@ -20,7 +20,7 @@ cat << EOB | sudo tee -a /etc/hosts
 10.10.25.1 oib oib.cloudify.labs
 EOB
 
-sudo hostnamectl set-hostname $(hostname)
+sudo hostnamectl set-hostname oib.cloudify.labs
 
 # fix root's authorized_keys
 sudo sed -i -e 's/.*ssh-rsa/ssh-rsa/' /root/.ssh/authorized_keys
