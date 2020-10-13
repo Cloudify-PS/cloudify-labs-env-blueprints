@@ -29,8 +29,8 @@ cat << EOB | sudo tee /etc/dhcp/dhclient.d/google_hostname.sh
 google_hostname_config() {
   google_set_hostname
   hostname="oib.cloudify.labs"
-  echo $hostname > /etc/hostname
-  hostname $hostname
+  echo \$hostname > /etc/hostname
+  hostname \$hostname
 }
 google_hostname_restore() {
   :
