@@ -87,23 +87,10 @@ LANG=en_US.utf-8
 LC_ALL=en_US.utf-8
 EOB
 
-# packstack -d --allinone \
-#           --provision-demo=n \
-#           --install-hosts=$(hostname -f) \
-#           --keystone-admin-passwd=$PASSWORD \
-#           --os-neutron-l2-agent=openvswitch \
-#           --os-neutron-ovs-bridge-mappings=extnet:br-ex \
-#           --os-neutron-ovs-bridge-interfaces=br-ex:$NIC \
-#           --os-neutron-ml2-mechanism-drivers=openvswitch \
-#           --os-neutron-ml2-type-drivers=vxlan,flat \
-#           --os-neutron-ml2-tenant-network-types=vxlan \
-#           --nova-libvirt-virt-type=kvm \
-#           --gen-answer-file answers.txt
-
 packstack --allinone \
   --nova-libvirt-virt-type=kvm \
   --keystone-admin-passwd=$PASSWORD \
-  --os-neutron-ovn-bridge-mappings=extnet:br-ex \
+  --os-neutron-ovn-bridge-mappings=extnet:br-ex,provider:br-mng \
   --os-neutron-ovn-bridge-interfaces=br-ex:$NIC \
   --os-neutron-l2-agent=openvswitch \
   --os-neutron-ml2-mechanism-drivers=openvswitch,l2population \
@@ -320,9 +307,9 @@ openstack image create --disk-format qcow2 --id aee5438f-1c7c-497f-a11e-53360241
 rm -f /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2
 
 echo "Uploading Ubuntu ..."
-curl https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img -o /tmp/bionic-server-cloudimg-amd64.img
-openstack image create --disk-format raw --id 05bb3a46-ca32-4032-bedd-8d7ebd5c8100 --file /tmp/bionic-server-cloudimg-amd64.img Ubuntu
-rm -f /tmp/bionic-server-cloudimg-amd64.img
+curl https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img -o /tmp/xenial-server-cloudimg-amd64-disk1.img
+openstack image create --disk-format raw --id 05bb3a46-ca32-4032-bedd-8d7ebd5c8100 --file /tmp/xenial-server-cloudimg-amd64-disk1.img Ubuntu
+rm -f /tmp/xenial-server-cloudimg-amd64-disk1.img
 
 echo "Uploading cirros ..."
 curl http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img -o /tmp/cirros-0.4.0-x86_64-disk.img
@@ -338,11 +325,6 @@ openstack flavor create --id '62ed898b-0871-481a-9bb4-ac5f81263b33' --ram 2048 -
 
 echo "Create Flavor for Cloudify Manager 2 Cores,  5GB RAM 20 GB Disk -  cloudify_flavor"
 openstack flavor create --id 'b1cefcbf-fab9-40d9-a084-8aeb2514028b' --ram 5000 --disk 20 --vcpus 2 --public cloudify_flavor
-
-# # Change admin password
-# openstack user password set --password $PASSWORD --original-password $OS_PASSWORD
-# sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" ${HOME}/keystonerc_admin
-# sudo sed -i "s/OS_PASSWORD='.*'/OS_PASSWORD=$PASSWORD/g" /root/keystonerc_admin
 
 #OpenVPN
 sudo yum -y --enablerepo=epel install openvpn
@@ -612,10 +594,8 @@ sudo chmod -R 600 /home/cloudify/.ssh/authorized_keys
 sudo chown -R cloudify:cloudify /home/cloudify/.ssh
 
 # Copy keystone_admin file
-# sudo cp ${HOME}/keystonerc_admin /root/
 sudo cp ${HOME}/keystonerc_admin /home/cloudify/
 sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
-
 
 # clean
 sudo rm -f /root/.ssh/authorized_keys

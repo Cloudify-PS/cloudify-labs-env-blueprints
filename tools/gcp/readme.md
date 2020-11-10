@@ -32,6 +32,7 @@ gcloud compute images create oib-image \
 > After this step oib-disk can be deleted.
 
 4. Create a VM instance
+> From this step OIB is created
 
 ```
 gcloud compute instances create oib-instance \
