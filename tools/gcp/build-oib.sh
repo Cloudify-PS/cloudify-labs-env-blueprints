@@ -90,8 +90,8 @@ EOB
 packstack --allinone \
   --nova-libvirt-virt-type=kvm \
   --keystone-admin-passwd=$PASSWORD \
-  --os-neutron-ovn-bridge-mappings=extnet:br-ex,provider:br-mng \
-  --os-neutron-ovn-bridge-interfaces=br-ex:$NIC,br-mng:br-mng \
+  --os-neutron-ovn-bridge-mappings=extnet:br-ex \
+  --os-neutron-ovn-bridge-interfaces=br-ex:$NIC \
   --os-neutron-l2-agent=openvswitch \
   --os-neutron-ml2-mechanism-drivers=openvswitch,l2population \
   --os-neutron-ml2-type-drivers=vxlan,flat \
@@ -183,7 +183,11 @@ sudo crudini --set /etc/nova/nova.conf DEFAULT ram_allocation_ratio 4
 # Allow to allocate more then existing Disk
 sudo crudini --set /etc/nova/nova.conf DEFAULT disk_allocation_ratio 10
 
+# Fix bridge-mapping in neutron
+sudo crudini --set /etc/neutron/plugins/ml2/openvswitch_agent.ini ovs bridge_mappings extnet:br-ex,provider:br-mng
+
 # apply configs
+sudo systemctl restart neutron-server.service
 sudo systemctl restart openstack-nova-compute
 sudo systemctl restart httpd
 sudo systemctl start openstack-nova-spicehtml5proxy
