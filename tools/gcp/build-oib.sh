@@ -91,7 +91,7 @@ packstack --allinone \
   --nova-libvirt-virt-type=kvm \
   --keystone-admin-passwd=$PASSWORD \
   --os-neutron-ovn-bridge-mappings=extnet:br-ex,provider:br-mng \
-  --os-neutron-ovn-bridge-interfaces=br-ex:$NIC \
+  --os-neutron-ovn-bridge-interfaces=br-ex:$NIC,br-mng:br-mng \
   --os-neutron-l2-agent=openvswitch \
   --os-neutron-ml2-mechanism-drivers=openvswitch,l2population \
   --os-neutron-ml2-type-drivers=vxlan,flat \
