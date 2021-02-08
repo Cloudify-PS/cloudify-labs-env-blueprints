@@ -9,8 +9,24 @@ inputs:
     type: string
     default: { get_secret : LabVMFlavorID }
 
+  oib_image_id:
+    type: string
+    default: { get_secret : OIB_Kilo_Testing_ImageID }
+
+  oib_flavor_id:
+    type: string
+    default: { get_secret : Flavor8x16 }
+
+  plugins_bundle:
+    type: string
+    default: { get_secret : CFY505VanillaPluginsBundle }
+
+  oib_disk_size:
+    type: integer
+    default: 80
+
 imports:
-  - CFY45_OIB.yaml
+  - CFY505_OIB.yaml
 
 
 dsl_definitions:
@@ -26,6 +42,17 @@ dsl_definitions:
 
 node_templates:
 
+  training_host_cloud_config:
+    type: cloudify.nodes.CloudInit.CloudConfig
+    properties:
+      resource_config:
+        users:
+        - name: { get_input: agent_user }
+          groups: sudo
+          shell: /bin/bash
+          sudo: ['ALL=(ALL) NOPASSWD:ALL']
+          ssh-authorized-keys:
+          - { get_secret: training_key_public }
 
   lab_vm1:
     type: cloudify.openstack.nodes.Server
@@ -39,14 +66,23 @@ node_templates:
         install_method: none
 
     interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: openstack.nova_plugin.server.create
+          inputs:
+            args:
+              default:
+                image: { get_input:  manager_image_id }
+                flavor: { get_input: manager_flavor_id }
+                userdata: { get_attribute: [ training_host_cloud_config, cloud_config ] }
+
     relationships:
       - target: lab_security_group
         type: cloudify.openstack.server_connected_to_security_group
-      - target: training_keypair
-        type: cloudify.openstack.server_connected_to_keypair
       - target: lab_vm1_ip
         type: cloudify.openstack.server_connected_to_floating_ip
-
+      - type: cloudify.relationships.depends_on
+        target: training_host_cloud_config
 
   lab_vm2:
     type: cloudify.openstack.nodes.Server
@@ -59,16 +95,22 @@ node_templates:
       agent_config:
         install_method: none
     interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: openstack.nova_plugin.server.create
+          inputs:
+            args:
+              default:
+                image: { get_input:  manager_image_id }
+                flavor: { get_input: manager_flavor_id }
+                userdata: { get_attribute: [ training_host_cloud_config, cloud_config ] }
     relationships:
       - target: lab_security_group
         type: cloudify.openstack.server_connected_to_security_group
-      - target: training_keypair
-        type: cloudify.openstack.server_connected_to_keypair
       - target: lab_vm2_ip
         type: cloudify.openstack.server_connected_to_floating_ip
-
-
-
+      - type: cloudify.relationships.depends_on
+        target: training_host_cloud_config
 
 
   lab_vm1_ip:
@@ -86,24 +128,18 @@ node_templates:
       floatingip:
         floating_network_name: { get_secret: external_network_name }
 
-  training_keypair:
-    type: cloudify.openstack.nodes.KeyPair
-    properties:
-      private_key_path: { get_secret: training_key_private }
-      use_external_resource: True
-      resource_id: Training
-      openstack_config: *openstack_config
+
 
 
 outputs:
 
   integration:
     value:
-      manager: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
-      composer: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/composer" ] }
+      manager: { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+      composer: { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/composer" ] }
       iaas_dash: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
       vpn_file:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
-      ssh_ip:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+      ssh_ip:  { get_attribute: [ manager_floating_ip, floating_ip_address ] }
       ssh_user: "centos"
 
   lab_env:
@@ -120,11 +156,11 @@ outputs:
           - name: 'Cloudify Manager Credentials'
             value: 'username: admin password: admin'
           - name: 'Cloudify Manager Link'
-            value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+            value: { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/" ] }
           - name: 'CLI command'
-            value: { concat: ["cfy profiles use " , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
+            value: { concat: ["cfy profiles use " , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
           - name: 'IP Address'
-            value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+            value:  { get_attribute: [ manager_floating_ip, floating_ip_address ] }
 
       - title: 'Virtual Machines for Training'
         open: no

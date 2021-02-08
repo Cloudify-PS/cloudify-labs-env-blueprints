@@ -310,10 +310,10 @@ curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1809.
 openstack image create --disk-format qcow2 --id aee5438f-1c7c-497f-a11e-53360241cf0f --file /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2 CentOS7
 rm -f /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2
 
-echo "Uploading Ubuntu ..."
-curl https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img -o /tmp/xenial-server-cloudimg-amd64-disk1.img
-openstack image create --disk-format raw --id 05bb3a46-ca32-4032-bedd-8d7ebd5c8100 --file /tmp/xenial-server-cloudimg-amd64-disk1.img Ubuntu
-rm -f /tmp/xenial-server-cloudimg-amd64-disk1.img
+echo "Uploading Ubuntu 14 ..."
+curl https://cloud-images.ubuntu.com/releases/trusty/release/ubuntu-14.04-server-cloudimg-amd64-disk1.img -o /tmp/ubuntu-14.04-server-cloudimg-amd64-disk1.img
+openstack image create --disk-format raw --id 05bb3a46-ca32-4032-bedd-8d7ebd5c8100 --file /tmp/ubuntu-14.04-server-cloudimg-amd64-disk1.img Ubuntu
+rm -f /tmp/ubuntu-14.04-server-cloudimg-amd64-disk1.img
 
 echo "Uploading cirros ..."
 curl http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img -o /tmp/cirros-0.4.0-x86_64-disk.img

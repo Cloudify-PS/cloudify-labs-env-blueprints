@@ -151,7 +151,7 @@ outputs:
             value: { get_attribute: [ lab_vm2_ip, floating_ip_address ] }
           - name: 'Training VMs Private Key'
             value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa'
-          - name: 'Training VMs Publick Key'
+          - name: 'Training VMs Public Key'
             value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa.pub'
 
 

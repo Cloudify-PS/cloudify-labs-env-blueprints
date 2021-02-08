@@ -7,7 +7,20 @@ REPO=$plugins_repo
 # install build
 ctx logger info "Installing packages"
 sudo yum -y install gcc python-devel wget python-netaddr
+
+
+
 sudo sh -c "source /opt/mgmtworker/env/bin/activate ; pip install netaddr"
+
+ctx logger info "Patching Agents PKG"
+wget https://storage.googleapis.com/cfylabspub/cloudify-agents-5.1.1-.dev1.el7.centos.noarch.tar.gz -O /tmp/agents.tar.gz
+sudo tar -xf /tmp/agents.tar.gz -C /opt/manager/resources/packages/agents/
+
+
+ctx logger info "Patching UI "
+wget  https://storage.googleapis.com/cfylabspub/LoggerHandler.js.patch -O /tmp/LoggerHandler.js.patch
+sudo patch /opt/cloudify-stage/backend/handler/LoggerHandler.js /tmp/LoggerHandler.js.patch
+sudo systemctl restart cloudify-stage.service
 
 # configure route, now and permanently
 ctx logger info "Setting Static routes"
@@ -16,6 +29,8 @@ sudo /bin/bash -c "echo '192.168.113.0/24 via 10.10.25.253 dev br-ovs' >> /etc/s
 sudo route add -net 172.25.1.0/24 gw 10.10.25.253
 sudo /bin/bash -c "echo '172.25.1.0/24 via 10.10.25.253 dev br-ovs' >> /etc/sysconfig/network"
 
+## TODO: addroutes to init file
+
 sudo systemctl restart cloudify-stage
 sudo systemctl restart cloudify-restservice
 
@@ -23,6 +38,7 @@ sudo systemctl restart cloudify-restservice
 sudo -u centos curl $licence  -o /tmp/cfy_licence
 sudo -u centos cfy license upload /tmp/cfy_licence
 sudo -u centos rm /tmp/cfy_licence
+
 
 # generate Key
 ctx logger info "Generating Keys"
@@ -48,6 +64,8 @@ sudo cat /etc/cloudify/.ssh/cfy-agent-kp.pub >> /home/centos/.ssh/authorized_key
 
 sudo -u centos cfy status >> /tmp/cfy_status.txt 2>&1 &
 
+ctx logger info "checking for file server to be up"
+#while ! wget --no-check-certificate https://localhost:53333/ > /dev/null 2>&1 ;  do  ctx logger info "Waiting file server..." ; sleep 1; done
 
 # create secrets
 ctx logger info "Creating Secrests"
@@ -66,6 +84,11 @@ sudo -u centos cfy secret create keystone_url -s http://10.10.25.1:5000/v3 >> /t
 sudo -u centos cfy secret create region -s RegionOne >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secret create keystone_region -s RegionOne >> /tmp/cfy_status.txt 2>&1 &
 
+  sudo -u centos cfy secret create openstack_auth_url -s http://10.10.25.1:5000/v3   >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create openstack_tenant_name -s admin >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create openstack_username -s admin  >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create openstack_password -s 'cloudify1234' >> /tmp/cfy_status.txt 2>&1 &
+
 #sudo -u centos cfy secret create agent_key_private -s /etc/cloudify/.ssh/cfy-agent-kp > /tmp/cfy_status.txt 2>&1
 
 # Create private_key as plain secret
@@ -78,6 +101,8 @@ sudo -u centos cfy secret create public_subnet_name -s  private_subnet >> /tmp/c
 sudo -u centos cfy secret create public_network_name -s private_network >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secret create router_name -s router1 >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secret create external_network_name -s external_network >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create external_network_id -s 1ceb37e5-f8ee-4192-80c5-433ec52bbcad >> /tmp/cfy_status.txt 2>&1 &
+
 
 
 ctx logger info "Creating k8s Secrests"
@@ -92,23 +117,26 @@ sudo -u centos cfy secrets create cfy_password -s admin >> /tmp/cfy_status.txt 2
 sudo -u centos cfy secrets create cfy_tenant -s default_tenant >> /tmp/cfy_status.txt 2>&1 &
 
 
+
 ctx logger info "Uploading Plugins Bundle"
-sudo -u centos cfy plugins  bundle-upload -p https://storage.reading-a.openstack.memset.com:8080/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/PluginsMD/labs-plugins-bundel.tar.gz >> /tmp/cfy_status.txt 2>&1
+#sudo -u centos cfy plugins  bundle-upload -p "$plugins" >> /tmp/cfy_status.txt 2>&1
 
-cfy plugins  bundle-upload >> /tmp/cfy_status.txt 2>&1
 
+### TODO
+ctx logger info "Checking for plugin executions"
+#while cfy executions list --include-system-workflows | grep  install_plugin | grep -v -e failed  -e completed > /dev/null; do  ctx logger info "Waiting for all workflows to finish..." ; sleep 1; done
 
 ctx logger info "Uploading Openstack Network Blueprint"
 
-sudo -u centos cfy blueprints upload -n simple-blueprint.yaml -b "openstack-example-network"  "https://storage.reading-a.openstack.memset.com/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Blueprints/Openstack/openstack-example-network-5.0.tar.gz"  >> /tmp/cfy_status.txt 2>&1
+#sudo -u centos cfy blueprints upload -n openstack-example-network.yaml -b "openstack-example-network"  "https://storage.googleapis.com/cfylabspub/openstack-example-network-5.0.tar.gz"  >> /tmp/cfy_status.txt 2>&1
 
 ctx logger info "Creating Openstack Network Deployment"
-sudo -u centos cfy deployments create -b "openstack-example-network"  "openstack-example-network" -i "external_network_name=external_network"  >> /tmp/cfy_status.txt 2>&1
+#sudo -u centos cfy deployments create -b "openstack-example-network"  "openstack-example-network" -i "external_network_name=external_network"  >> /tmp/cfy_status.txt 2>&1
 
-sleep 5
+
 
 ctx logger info "Installing Openstack Network Deployment"
-sudo -u centos cfy executions start install -d "openstack-example-network"  >> /tmp/cfy_status.txt 2>&1
+#sudo -u centos cfy executions start install -d "openstack-example-network"  >> /tmp/cfy_status.txt 2>&1
 
 
 ctx logger info "Script Ends"
