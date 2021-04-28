@@ -425,7 +425,7 @@ outputs:
             value: 'centos'
           - name: 'ssh Private Key'
             value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa'
-          - name: 'ssh Publick Key'
+          - name: 'ssh Public Key'
             value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa.pub'
 
       - title: 'Virtual Machines'
@@ -439,5 +439,5 @@ outputs:
             value: 'centos'
           - name: 'ssh Private Key'
             value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa'
-          - name: 'ssh Publick Key'
+          - name: 'ssh Public Key'
             value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa.pub'

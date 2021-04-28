@@ -70,6 +70,11 @@ sudo -u centos cfy secret create keystone_url -s http://10.10.25.1:5000/v2.0 >> 
 sudo -u centos cfy secret create region -s RegionOne >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secret create keystone_region -s RegionOne >> /tmp/cfy_status.txt 2>&1 &
 
+sudo -u centos cfy secret create openstack_auth_url -s http://10.10.25.1:5000/v3   >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create openstack_tenant_name -s admin >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create openstack_username -s admin  >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create openstack_password -s 'cloudify1234' >> /tmp/cfy_status.txt 2>&1 &
+
 #sudo -u centos cfy secret create agent_key_private -s /etc/cloudify/.ssh/cfy-agent-kp > /tmp/cfy_status.txt 2>&1
 
 # Create private_key as plain secret
@@ -82,6 +87,8 @@ sudo -u centos cfy secret create public_subnet_name -s  private_subnet >> /tmp/c
 sudo -u centos cfy secret create public_network_name -s private_network >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secret create router_name -s router1 >> /tmp/cfy_status.txt 2>&1 &
 sudo -u centos cfy secret create external_network_name -s external_network >> /tmp/cfy_status.txt 2>&1 &
+sudo -u centos cfy secret create external_network_id -s 1ceb37e5-f8ee-4192-80c5-433ec52bbcad >> /tmp/cfy_status.txt 2>&1 &
+
 
 
 ctx logger info "Creating k8s Secrests"
@@ -107,7 +114,7 @@ ctx logger info "Checking for plugin executions"
 
 ctx logger info "Uploading Openstack Network Blueprint"
 
-sudo -u centos cfy blueprints upload -n simple-blueprint.yaml -b "openstack-example-network"  "https://storage.reading-a.openstack.memset.com/swift/v1/ca0c4540c8f84ad3917c40b432a49df8/Blueprints/Openstack/openstack-example-network-4.5.zip"  >> /tmp/cfy_status.txt 2>&1
+sudo -u centos cfy blueprints upload -n openstack-example-network.yaml -b "openstack-example-network"  "https://storage.googleapis.com/cfylabspub/openstack-example-network-5.0.tar.gz"  >> /tmp/cfy_status.txt 2>&1
 
 ctx logger info "Creating Openstack Network Deployment"
 sudo -u centos cfy deployments create -b "openstack-example-network"  "openstack-example-network" -i "external_network_name=external_network"  >> /tmp/cfy_status.txt 2>&1

@@ -1,7 +1,25 @@
 tosca_definitions_version: cloudify_dsl_1_3
 
+inputs:
+
+  oib_image_id:
+    type: string
+    default: { get_secret : OIB_Rocky_ImageID }
+
+  oib_flavor_id:
+    type: string
+    default: { get_secret : Flavor8x16 }
+
+  plugins_bundle:
+    type: string
+    default: { get_secret : CFY46VanillaPluginsBundle }
+
+  oib_disk_size:
+    type: integer
+    default: 80
+
 imports:
-  - CFY455_OIB.yaml
+  - CFY50_OIB_Rocky.yaml
 
 
 
@@ -9,11 +27,11 @@ outputs:
 
   integration:
     value:
-      manager: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
-      composer: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/composer" ] }
-      iaas_dash: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/dashboard" ] }
-      vpn_file:  { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
-      ssh_ip:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+      manager: { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+      composer: { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/composer" ] }
+      iaas_dash: { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/dashboard" ] }
+      vpn_file:  { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/vpn/client.ovpn" ] }
+      ssh_ip:  { get_attribute: [ manager_floating_ip, floating_ip_address ] }
       ssh_user: "centos"
 
   lab_env:
@@ -30,11 +48,11 @@ outputs:
           - name: 'Cloudify Manager Credentials'
             value: 'username: admin password: admin'
           - name: 'Cloudify Manager Link'
-            value: { concat: ["http://" , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, "/" ] }
+            value: { concat: ["http://" , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, "/" ] }
           - name: 'CLI command'
-            value: { concat: ["cfy profiles use " , { get_attribute: [ lab_floating_ip, floating_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
+            value: { concat: ["cfy profiles use " , { get_attribute: [ manager_floating_ip, floating_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
           - name: 'IP Address'
-            value:  { get_attribute: [ lab_floating_ip, floating_ip_address ] }
+            value:  { get_attribute: [ manager_floating_ip, floating_ip_address ] }
 
 
       - title: 'VPN Configuration'
