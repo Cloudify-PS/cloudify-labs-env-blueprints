@@ -5,8 +5,8 @@ PRIVATE_IP=$private_ip
 
 cfy_manager add-networks --networks "{\"external\": \"${PUBLIC_IP}\"}"
 
-sudo systemctl restart cloudify-mgmtworker
+sudo supervisorctl restart cloudify-mgmtworker
 
-sudo systemctl restart nginx
+sudo supervisorctl restart nginx
 
-sudo systemctl restart cloudify-rabbitmq
+sudo supervisorctl restart cloudify-rabbitmq
