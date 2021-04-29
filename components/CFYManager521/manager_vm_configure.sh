@@ -15,8 +15,8 @@ sudo sh -c "source /opt/mgmtworker/env/bin/activate ; pip install netaddr"
 #sudo route add -net 172.25.1.0/24 gw 10.10.25.253
 #sudo /bin/bash -c "echo '172.25.1.0/24 via 10.10.25.253 dev br-ovs' >> /etc/sysconfig/network"
 
-sudo systemctl restart cloudify-stage
-sudo systemctl restart cloudify-restservice
+sudo supervisorctl restart cloudify-stage
+sudo supervisorctl restart cloudify-restservice
 
 #handle licence
 sudo -u centos curl $licence  -o /tmp/cfy_licence
