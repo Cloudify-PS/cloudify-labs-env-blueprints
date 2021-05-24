@@ -1,0 +1,235 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+
+  plugins_bundle:
+    type: string
+    default: { get_secret : CFY505VanillaPluginsBundle }
+
+  labvm_instance_type:
+    type: string
+    default: n1-standard-2
+
+  centos_image:
+    type: string
+    default: { get_secret : GCP_Lab_VM_Image }
+
+imports:
+  - CFY522_OIB.yaml
+
+dsl_definitions:
+
+  client_config: &gcp_config
+    auth: { get_secret: GCPAuth }
+    zone: { get_input: zone }
+
+node_templates:
+
+    labvm1:
+      type: cloudify.gcp.nodes.Instance
+      properties:
+        gcp_config: *gcp_config
+        agent_config:
+          network: external
+          key: {  get_input: agent_user_private_key }
+          user: { get_input: agent_user }
+        use_public_ip: true
+        image_id: { get_input: centos_image }
+        instance_type: { get_input: labvm_instance_type }
+        zone: { get_input: zone }
+        external_ip: true
+      relationships:
+        - type: cloudify.relationships.depends_on
+          target: subnet
+
+    labvm2_disk:
+      type: cloudify.gcp.nodes.Volume
+      properties:
+        gcp_config: *gcp_config
+        image: { get_input: centos_image }
+        size: 40
+        boot: true
+
+    labvm2:
+      type: cloudify.gcp.nodes.Instance
+      properties:
+        gcp_config: *gcp_config
+        agent_config:
+          network: external
+          key: {  get_input: agent_user_private_key }
+          user: { get_input: agent_user }
+        use_public_ip: true
+        image_id: { get_input: centos_image }
+        instance_type: { get_input: labvm_instance_type }
+        zone: { get_input: zone }
+        external_ip: true
+      relationships:
+        - type: cloudify.relationships.depends_on
+          target: subnet
+        - type: cloudify.relationships.connected_to
+          target: labvm2_disk
+
+    labvm2_config:
+      type: cloudify.nodes.ApplicationModule
+      interfaces:
+        cloudify.interfaces.lifecycle:
+          configure:
+            implementation: components/labvm/appvm_prep.sh
+      relationships:
+        - target: labvm2
+          type: cloudify.relationships.contained_in
+
+    labvm3_disk:
+      type: cloudify.gcp.nodes.Volume
+      properties:
+        gcp_config: *gcp_config
+        image: { get_input: centos_image }
+        size: 40
+        boot: true
+
+    labvm3:
+      type: cloudify.gcp.nodes.Instance
+      properties:
+        gcp_config: *gcp_config
+        agent_config:
+          network: external
+          key: {  get_input: agent_user_private_key }
+          user: { get_input: agent_user }
+        use_public_ip: true
+        image_id: { get_input: centos_image }
+        instance_type: { get_input: labvm_instance_type }
+        zone: { get_input: zone }
+        external_ip: true
+      relationships:
+        - type: cloudify.relationships.depends_on
+          target: subnet
+        - type: cloudify.relationships.connected_to
+          target: labvm3_disk
+
+    labvm3_config:
+      type: cloudify.nodes.ApplicationModule
+      interfaces:
+        cloudify.interfaces.lifecycle:
+          configure:
+            implementation: components/labvm/appvm_prep.sh
+      relationships:
+        - target: labvm3
+          type: cloudify.relationships.contained_in
+
+    labvm4_disk:
+      type: cloudify.gcp.nodes.Volume
+      properties:
+        gcp_config: *gcp_config
+        image: { get_input: centos_image }
+        size: 40
+        boot: true
+
+    labvm4:
+      type: cloudify.gcp.nodes.Instance
+      properties:
+        gcp_config: *gcp_config
+        agent_config:
+          network: external
+          key: {  get_input: agent_user_private_key }
+          user: { get_input: agent_user }
+        use_public_ip: true
+        image_id: { get_input: centos_image }
+        instance_type: { get_input: labvm_instance_type }
+        zone: { get_input: zone }
+        external_ip: true
+      relationships:
+        - type: cloudify.relationships.depends_on
+          target: subnet
+        - type: cloudify.relationships.connected_to
+          target: labvm4_disk
+
+    labvm4_config:
+      type: cloudify.nodes.ApplicationModule
+      interfaces:
+        cloudify.interfaces.lifecycle:
+          configure:
+            implementation: components/labvm/appvm_prep.sh
+      relationships:
+        - target: labvm4
+          type: cloudify.relationships.contained_in
+
+
+
+outputs:
+
+  integration:
+    value:
+      manager: { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/dashboard" ] }
+      composer: { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/composer" ] }
+      iaas_dash: { concat: ["http://" , { get_attribute: [ oib_server, public_ip_address ] }, "/dashboard" ] }
+      vpn_file:  { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/vpn/client.ovpn" ] }
+      ssh_ip:  { get_attribute: [ cfy_manager, public_ip_address ] }
+      osp_ip: { get_attribute: [ oib_server, public_ip_address ] }
+      ssh_user: "centos"
+
+  lab_env:
+    description: OpenStack Cloudify Lab
+    value:
+      video: https://www.youtube.com/embed/psJhdw78kkw
+      suspend: false
+
+  lab_ui_outputs:
+    value:
+      - title: 'Cloudify Manager'
+        open: yes
+        items:
+          - name: 'Cloudify Manager Credentials'
+            value: 'username: admin password: admin'
+          - name: 'Cloudify Manager Link'
+            value: { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/" ] }
+          - name: 'CLI command'
+            value: { concat: ["cfy profiles use " , { get_attribute: [ cfy_manager, public_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
+          - name: 'IP Address'
+            value:  { get_attribute: [ cfy_manager, public_ip_address ] }
+
+      - title: 'Virtual Machines for Training'
+        open: no
+        items:
+          - name: 'CLI VM Public IP'
+            value: { get_attribute: [ labvm1, public_ip_address ] }
+
+          - name: 'App1 VM IP'
+            value: { get_attribute: [ labvm2, public_ip_address ] }
+          - name: 'App1 VM Private IP'
+            value: { get_attribute: [ labvm2, networkInterfaces, 0,  networkIP] }
+
+          - name: 'App2 VM IP'
+            value: { get_attribute: [ labvm3, public_ip_address ] }
+          - name: 'App2 VM Private IP'
+            value: { get_attribute: [ labvm3, networkInterfaces, 0,  networkIP ] }
+
+          - name: 'App3 VM IP'
+            value: { get_attribute: [ labvm4, public_ip_address ] }
+          - name: 'App3 VM Private IP'
+            value: { get_attribute: [ labvm4, networkInterfaces, 0,  networkIP ] }
+
+          - name: 'Training VM user'
+            value: 'centos'
+          - name: 'Training VMs Private Key'
+            value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa'
+          - name: 'Training VMs Public Key'
+            value: 'https://s3-eu-west-1.amazonaws.com/cloudify-labs/cert/training.rsa.pub'
+
+      - title: 'VPN Configuration'
+        open: no
+        items:
+          - name: 'OpenVpn Configuration File'
+            value: { concat: ["http://" , { get_attribute: [ oib_server, public_ip_address ] }, "/vpn/client.ovpn" ] }
+          - name: 'VPN Portal'
+            value:  { get_attribute: [ oib_server, public_ip_address ] }
+          - name: 'VPN Configuration Guide'
+            value: 'https://cloudify.co/knowledge-base/cloudify-labs-vpn-configuration-guide/'
+
+      - title: 'Lab OpenStack IaaS'
+        open: no
+        items:
+          - name: 'OpenStack Dashboard Credentials'
+            value: 'username: admin password: cloudify1234'
+          - name: 'OpenStack Dashboard'
+            value:  { concat: ["http://" , { get_attribute: [ oib_server, public_ip_address ] }, "/dashboard" ] }
