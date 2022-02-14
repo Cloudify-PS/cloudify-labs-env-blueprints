@@ -19,6 +19,8 @@ node_types:
            inputs:
              template_file:
                default: "components/HubSpot/templates/form_submit.yaml"
+             prerender:
+               default: true
              params:
                default:
                  form_guid: { get_property: [SELF, form_guid] }

@@ -133,9 +133,9 @@ node_templates:
       portal_id: { get_input: hubspot_portal }
       form_guid: { get_input: hubspot_form }
       params:
-              FirstName:  { get_input: customer_name }
-              LastName: " "
-              Email: { get_input: customer_email }
+              firstname:  { get_input: customer_name }
+              lastname: " "
+              email: { get_input: customer_email }
 
 
 ##
