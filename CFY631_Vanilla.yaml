@@ -1,0 +1,66 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+inputs:
+
+
+  plugins_bundle:
+    type: string
+    default: { get_secret : CFY505VanillaPluginsBundle }
+
+
+
+imports:
+  - CFY631_OIB.yaml
+
+
+
+outputs:
+
+  integration:
+    value:
+      manager: { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/dashboard" ] }
+      composer: { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/composer" ] }
+      iaas_dash: { concat: ["http://" , { get_attribute: [ oib_server, public_ip_address ] }, "/dashboard" ] }
+      vpn_file:  { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/vpn/client.ovpn" ] }
+      ssh_ip:  { get_attribute: [ cfy_manager, public_ip_address ] }
+      osp_ip: { get_attribute: [ oib_server, public_ip_address ] }
+      ssh_user: "centos"
+
+  lab_env:
+    description: OpenStack Cloudify Lab
+    value:
+      video: https://www.youtube.com/embed/psJhdw78kkw
+      suspend: false
+
+  lab_ui_outputs:
+    value:
+      - title: 'Cloudify Manager'
+        open: yes
+        items:
+          - name: 'Cloudify Manager Credentials'
+            value: 'username: admin password: admin'
+          - name: 'Cloudify Manager Link'
+            value: { concat: ["http://" , { get_attribute: [ cfy_manager, public_ip_address ] }, "/" ] }
+          - name: 'CLI command'
+            value: { concat: ["cfy profiles use " , { get_attribute: [ cfy_manager, public_ip_address ] }, " -u admin -p admin -t default_tenant" ] }
+          - name: 'IP Address'
+            value:  { get_attribute: [ cfy_manager, public_ip_address ] }
+
+
+      - title: 'VPN Configuration'
+        open: no
+        items:
+          - name: 'OpenVpn Configuration File'
+            value: { concat: ["http://" , { get_attribute: [ oib_server, public_ip_address ] }, "/vpn/client.ovpn" ] }
+          - name: 'VPN Portal'
+            value:  { get_attribute: [ oib_server, public_ip_address ] }
+          - name: 'VPN Configuration Guide'
+            value: 'https://cloudify.co/knowledge-base/cloudify-labs-vpn-configuration-guide/'
+
+      - title: 'Lab OpenStack IaaS'
+        open: no
+        items:
+          - name: 'OpenStack Dashboard Credentials'
+            value: 'username: admin password: cloudify1234'
+          - name: 'OpenStack Dashboard'
+            value:  { concat: ["http://" , { get_attribute: [ oib_server, public_ip_address ] }, "/dashboard" ] }
