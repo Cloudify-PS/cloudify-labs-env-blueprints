@@ -285,26 +285,8 @@ sudo sed -i -e '/\[Service\]/a ExecStartPre=/bin/sleep 90' /usr/lib/systemd/syst
 sudo systemctl daemon-reload
 
 
-# Create openstack external router and network
-EXTERNAL_NETWORK="external_network"
-source ${HOME}/keystonerc_admin
-neutron net-create $EXTERNAL_NETWORK --provider:network_type flat --provider:physical_network extnet --router:external --share
-neutron subnet-create --name ext_sub --enable_dhcp=False --allocation-pool=start=172.25.1.10,end=172.25.1.250 --gateway=172.25.1.1 $EXTERNAL_NETWORK 172.25.1.0/24
-
-openstack router create router1
-openstack router set router1 --external-gateway $EXTERNAL_NETWORK
-
-# create private_network
-neutron net-create private_network
-neutron subnet-create --name private_subnet --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4 private_network 192.168.113.0/24
-neutron router-interface-add router1 private_subnet
-
-# create provider network and subnet
-neutron net-create provider --provider:network_type flat --provider:physical_network provider
-neutron subnet-create provider 10.10.25.0/24 --name provider_subnet --enable-dhcp --allocation-pool start=10.10.25.100,end=10.10.25.200 --dns-nameserver 8.8.8.8 --ip-version 4 --gateway 10.10.25.253
-neutron router-interface-add router1 provider_subnet
-
 # create openstack images
+source ${HOME}/keystonerc_admin
 echo "Uploading CentOS 7.6 ..."
 curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1809.qcow2 -o /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2
 openstack image create --disk-format qcow2 --id aee5438f-1c7c-497f-a11e-53360241cf0f --file /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2 CentOS7
@@ -600,6 +582,43 @@ sudo chown -R cloudify:cloudify /home/cloudify/.ssh
 # Copy keystone_admin file
 sudo cp ${HOME}/keystonerc_admin /home/cloudify/
 sudo chown cloudify:cloudify /home/cloudify/keystonerc_admin
+
+
+cat << EOB | sudo tee /root/fix_networks.sh
+# Create openstack external router and network
+source /root/keystonerc_admin
+neutron net-create external_network --provider:network_type flat --provider:physical_network extnet --router:external --share
+neutron subnet-create --name ext_sub --enable_dhcp=False --allocation-pool=start=172.25.1.10,end=172.25.1.250 --gateway=172.25.1.1 external_network 172.25.1.0/24
+
+openstack router create router1
+openstack router set router1 --external-gateway external_network
+
+# create private_network
+neutron net-create private_network
+neutron subnet-create --name private_subnet --dns-nameserver 8.8.8.8 --dns-nameserver 8.8.4.4 private_network 192.168.113.0/24
+neutron router-interface-add router1 private_subnet
+
+# create provider network and subnet
+neutron net-create provider --provider:network_type flat --provider:physical_network provider
+neutron subnet-create provider 10.10.25.0/24 --name provider_subnet --enable-dhcp --allocation-pool start=10.10.25.100,end=10.10.25.200 --dns-nameserver 8.8.8.8 --ip-version 4 --gateway 10.10.25.253
+neutron router-interface-add router1 provider_subnet
+EOB
+
+
+cat << EOB | sudo tee /usr/lib/systemd/system/openstack-starter.service
+[Unit]
+After=basic.target network.target system.slice systemd-journald.socket openstack-nova-compute.service
+[Install]
+WantedBy=multi-user.target
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/nova-manage cell_v2 discover_hosts --verbose
+ExecStart=/usr/bin/bash /root/fix_networks.sh
+User=root
+Group=root
+EOB
+
+sudo systemctl enable openstack-starter
 
 # clean
 sudo rm -f /root/.ssh/authorized_keys

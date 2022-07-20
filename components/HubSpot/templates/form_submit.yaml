@@ -5,10 +5,7 @@ rest_calls:
       Content-Type: "application/x-www-form-urlencoded"
 
     payload_format: "urlencode"
-    payload:
-      email: "{{params['Email']}}"
-      firstname: "{{params['FirstName']}}"
-      lastname: "{{params['LastName']}}"
+    payload: {{ params|tojson }}
 
     response_format: raw
     response_expectation:

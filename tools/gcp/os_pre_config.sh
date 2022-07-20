@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo sed -i "/enabled=1/c\enabled=0" /etc/yum.repos.d/google-cloud.repo
+
 sudo yum install -y yum-utils
 sudo yum-config-manager --disable epel
 
